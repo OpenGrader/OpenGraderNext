@@ -1,6 +1,6 @@
 # Open Grader Next.JS
 
-To run start with running the [pnpm](https://pnpm.io/installation) install with
+Start with running the [pnpm](https://pnpm.io/installation) install  to download all dependencies
 
 ```bash
 pnpm install
