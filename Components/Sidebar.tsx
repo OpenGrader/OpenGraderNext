@@ -25,8 +25,6 @@ const SideBarLinks = ({parent}:{parent:string}) =>{
 }
 
 const Sidebar = ({parent}:{parent:string}) =>{
-    const router = useRouter()
-    console.log(router)
     const {name,position} = user
     return(
         <div className="h-screen w-2/12 flex flex-col text-gray-50 bg-zinc-900 justify-between">
