@@ -9,7 +9,7 @@ export async function getServerSideProps(context:any){
 
 const PageLoader = ({page}:{page:string}) =>{
     switch (page) {
-        case "Student":
+        case "Students":
             return <Students/>
             break;
     
@@ -38,7 +38,9 @@ const Page = ({data}:{data:Array<string>}) =>{
         return(
             <div className="flex">
             <Sidebar parent={data[1]} courseID={courseID}/>
-            <PageLoader page={data[1]}/>
+                <div className="w-10/12">
+                    <PageLoader page={data[1]}/>
+                </div>
             </div>
         )
     }
