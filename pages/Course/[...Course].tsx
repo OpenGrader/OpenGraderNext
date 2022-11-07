@@ -27,7 +27,7 @@ const Page = ({data}:{data:Array<string>}) =>{
     {
         return(
             <div className="flex">
-                <Sidebar courseID={data[0]} parent="Homepage"/>
+                <Sidebar parent="Homepage"/>
                 <h1 className="font-bold text-3xl text-slate-50">Homepage</h1>
             </div>
         )
@@ -37,7 +37,7 @@ const Page = ({data}:{data:Array<string>}) =>{
     {
         return(
             <div className="flex">
-            <Sidebar courseID={data[0]} parent={data[1]}/>
+            <Sidebar parent={data[1]}/>
             <PageLoader page={data[1]}/>
             </div>
         )
