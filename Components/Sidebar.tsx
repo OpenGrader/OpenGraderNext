@@ -16,17 +16,15 @@ const SideBarLinks = ({parent}:{parent:string}) =>{
         {
             Options.map((option,index)=>{
                 if(option.text == parent)
-                    return <Link href={option.link} className="bg-slate-900 h-10 w-full rounded-lg text-left px-2 flex items-center">{option.text}</Link>
+                    return <Link href={option.link} key={index} className="bg-slate-900 h-10 w-full rounded-lg text-left px-2 flex items-center">{option.text}</Link>
                 else
-                    return <Link href={option.link} className="bg-slate-800 h-10 w-full rounded-lg text-left px-2 flex items-center">{option.text}</Link>
+                    return <Link href={option.link} key={index} className="bg-slate-800 h-10 w-full rounded-lg text-left px-2 flex items-center">{option.text}</Link>
             })
         }
     </>)
 }
 
 const Sidebar = ({parent}:{parent:string}) =>{
-    const router = useRouter()
-    console.log(router)
     const {name,position} = user
     return(
         <div className="h-screen w-2/12 flex flex-col text-gray-50 bg-zinc-900 justify-between">
