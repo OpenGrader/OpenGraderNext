@@ -1,35 +1,36 @@
 import userIMG from "../public/UserPlaceholder.png"
 import { HiCog } from "react-icons/hi"
 import Link from "next/link"
+import Router, { useRouter } from "next/router"
 
 const user ={  
                 name:"John D.",
                 position:"Teacher"
             }
 
-const SideBarLinks = () =>{
+const SideBarLinks = ({parent}:{parent:string}) =>{
     const Options = [{text:"Assignments",link:"#"},
                     {text:"Students",link:"#"},
                     {text:"Reports",link:"#"}]
     return(<>
         {
             Options.map((option,index)=>{
-                if(index % 2 == 0)
-                    return <Link href={option.link} className="bg-slate-800 h-10 w-full rounded-lg text-left px-2 flex items-center">{option.text}</Link>
+                if(option.text == parent)
+                    return <Link href={option.link} key={index} className="bg-slate-900 h-10 w-full rounded-lg text-left px-2 flex items-center">{option.text}</Link>
                 else
-                    return <Link href={option.link} className="bg-slate-900 h-10 w-full rounded-lg text-left px-2 flex items-center">{option.text}</Link>
+                    return <Link href={option.link} key={index} className="bg-slate-800 h-10 w-full rounded-lg text-left px-2 flex items-center">{option.text}</Link>
             })
         }
     </>)
 }
 
-const Sidebar = () =>{
+const Sidebar = ({parent}:{parent:string}) =>{
     const {name,position} = user
     return(
         <div className="h-screen w-2/12 flex flex-col text-gray-50 bg-zinc-900 justify-between">
             <div className=" p-3 flex flex-col gap-6 font-bold">
                 <h1 className="text-center text-3xl">OpenGrader</h1>
-                <SideBarLinks/>
+                <SideBarLinks parent={parent}/>
             </div>
             <div className="w-full h-20 px-4 flex items-center justify-between bg-zinc-800">
                 <div className="flex items-center gap-4">
