@@ -23,8 +23,7 @@ const SideBarLinks = ({ parent, courseID }: { parent: string; courseID: string }
             <Link
               href={link}
               key={index}
-              className="bg-slate-900 h-10 w-full rounded-lg text-left px-2 flex items-center"
-            >
+              className="bg-slate-900 h-10 w-full rounded-lg text-left px-2 flex items-center">
               {option.text}
             </Link>
           );
@@ -33,8 +32,7 @@ const SideBarLinks = ({ parent, courseID }: { parent: string; courseID: string }
             <Link
               href={link}
               key={index}
-              className="bg-slate-800 h-10 w-full rounded-lg text-left px-2 flex items-center"
-            >
+              className="bg-slate-800 h-10 w-full rounded-lg text-left px-2 flex items-center">
               {option.text}
             </Link>
           );
