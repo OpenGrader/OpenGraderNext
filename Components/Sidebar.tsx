@@ -8,6 +8,7 @@ const user = {
   position: "Teacher",
 };
 
+
 const SideBarLinks = ({ parent, courseID }: { parent: string; courseID: string }) => {
   const Options = [
     { text: "Assignments", link: "#" },
