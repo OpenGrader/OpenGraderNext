@@ -1,5 +1,5 @@
 import { HiExclamation, HiCheckCircle, HiClock, HiEye } from "react-icons/hi";
-import { alerts,student } from "../../types";
+import { alerts, student } from "../../types";
 //warning,all good, late, plagarism
 
 const courseData = { courseName: "CSCE 4110.001" };
