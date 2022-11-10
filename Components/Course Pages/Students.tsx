@@ -1,4 +1,5 @@
 import { HiExclamation, HiCheckCircle, HiClock, HiEye } from "react-icons/hi";
+import { alerts,student } from "../../types";
 //warning,all good, late, plagarism
 
 const courseData = { courseName: "CSCE 4110.001" };
@@ -41,14 +42,13 @@ const studentData = [
   },
 ];
 
-const Warnings = ({ Alerts }: { Alerts: any }) => {
+const Warnings = ({ Alerts }: { Alerts: alerts }) => {
   const { Missing, Plagarism, Errors } = Alerts;
 
   if (Missing == 0 && Plagarism == 0 && Errors == 0) {
     return (
       <div className="text-green-500">
-        {" "}
-        <HiCheckCircle />{" "}
+        <HiCheckCircle />
       </div>
     );
   }
@@ -74,7 +74,7 @@ const Warnings = ({ Alerts }: { Alerts: any }) => {
   );
 };
 
-const StudentBlock = ({ data }: { data: any }) => {
+const StudentBlock = ({ data }: { data: student }) => {
   const { Name, ID, Grade, SubmissionCount, Alerts } = data;
   return (
     <div className="bg-slate-800 w-full p-3 rounded-md">
