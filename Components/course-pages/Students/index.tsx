@@ -1,5 +1,5 @@
 import { alerts, AlertType, student } from "../../../types";
-import { SubmissionIcon } from "./SubmissionIcon";
+import SubmissionIcon from "./SubmissionIcon";
 //warning,all good, late, plagarism
 
 const courseData = { courseName: "CSCE 4110.001" };

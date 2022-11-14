@@ -7,7 +7,7 @@ type SubmissionIconProps = {
   count: number;
 };
 
-export const SubmissionIcon = ({ alertType, count }: SubmissionIconProps) => {
+const SubmissionIcon = ({ alertType, count }: SubmissionIconProps) => {
   if (alertType == null)
     return (
       <Tippy content="No warnings">
@@ -46,3 +46,5 @@ export const SubmissionIcon = ({ alertType, count }: SubmissionIconProps) => {
       );
   }
 };
+
+export default SubmissionIcon;
