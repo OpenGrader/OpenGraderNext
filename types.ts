@@ -11,3 +11,9 @@ export type student = {
   SubmissionCount: number;
   Alerts: alerts;
 };
+
+export type assignment = {
+  Name: string;
+  SubmissionCount: number;
+  Warnings: number;
+};

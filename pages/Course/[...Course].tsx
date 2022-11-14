@@ -1,5 +1,6 @@
 import Sidebar from "../../Components/Sidebar";
 import Students from "../../Components/course-pages/Students";
+import Assignments from "../../Components/course-pages/Assignments";
 
 export async function getServerSideProps(context: any) {
   const data = context.query.Course;
@@ -12,6 +13,10 @@ const PageLoader = ({ page }: { page: string }) => {
       return <Students />;
       break;
 
+    case "Assignments":
+      return <Assignments />;
+      break;
+
     default:
       return <h1 className="font-bold text-3xl text-slate-50">INVALID PAGE</h1>;
       break;
@@ -19,7 +24,6 @@ const PageLoader = ({ page }: { page: string }) => {
 };
 
 const Page = ({ data }: { data: Array<string> }) => {
-  console.log(data.length);
   const courseID = data[0] || "";
   if (data.length === 1) {
     return (
