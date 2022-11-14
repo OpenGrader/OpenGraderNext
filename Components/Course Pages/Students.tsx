@@ -104,9 +104,9 @@ const StudentBlock = ({ data }: { data: student }) => {
 const Students = () => {
   const { courseName } = courseData;
   return (
-    <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 ">
-      <h1>Students - {courseName}</h1>
-      <div className="flex flex-col gap-6">
+    <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 h-screen">
+      <h1 className="text-3xl font-bold">Students - {courseName}</h1>
+      <div className="flex flex-col gap-6 overflow-auto">
         {studentData.map((student, index) => {
           return <StudentBlock data={student} key={index} />;
         })}
