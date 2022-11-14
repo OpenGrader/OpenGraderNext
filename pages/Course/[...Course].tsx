@@ -21,7 +21,7 @@ const PageLoader = ({ page }: { page: string }) => {
 const Page = ({ data }: { data: Array<string> }) => {
   console.log(data.length);
   const courseID = data[0] || "";
-  if (data.length == 1) {
+  if (data.length === 1) {
     return (
       <div className="flex">
         <Sidebar parent="Homepage" courseID={courseID} />
