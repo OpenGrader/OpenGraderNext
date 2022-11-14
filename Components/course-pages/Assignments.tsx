@@ -1,5 +1,6 @@
-
-import {assignment } from "../../types";
+import Link from "next/link";
+import { assignment } from "../../types";
+import { HiPlusCircle, HiPlusSm } from "react-icons/hi";
 //warning,all good, late, plagarism
 
 const courseData = { courseName: "CSCE 4110.001" };
@@ -22,10 +23,8 @@ const assignmentDate = [
   },
 ];
 
-
-
 const AssignemntBlock = ({ data }: { data: assignment }) => {
-  const { Name,  SubmissionCount, Warnings } = data;
+  const { Name, SubmissionCount, Warnings } = data;
   return (
     <div className="bg-slate-800 w-full p-3 rounded-md">
       <div className="flex justify-between">
@@ -46,18 +45,22 @@ const AssignemntBlock = ({ data }: { data: assignment }) => {
   );
 };
 
-
 const Assignments = () => {
   const { courseName } = courseData;
   return (
     <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 ">
-      <h1 className="text-3xl font-bold">Assignments - {courseName}</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Assignments - {courseName}</h1>
+        <Link href={"#"} className="">
+          <div className=" w-48 h-12 flex justify-center items-center rounded-lg bg-sky-700 text-3xl">
+            <HiPlusCircle />
+          </div>
+        </Link>
+      </div>
       <div className="flex flex-col gap-6">
-        {
-          assignmentDate.map((assignment,index)=>{
-            return <AssignemntBlock data={assignment} key={index}/>;
-          })
-        }
+        {assignmentDate.map((assignment, index) => {
+          return <AssignemntBlock data={assignment} key={index} />;
+        })}
       </div>
     </div>
   );
