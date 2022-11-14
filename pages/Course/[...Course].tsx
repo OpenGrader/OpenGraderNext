@@ -1,5 +1,5 @@
 import Sidebar from "../../Components/Sidebar";
-import Students from "../../Components/Course Pages/Students";
+import Students from "../../Components/course-pages/Students";
 
 export async function getServerSideProps(context: any) {
   const data = context.query.Course;
