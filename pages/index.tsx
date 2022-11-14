@@ -1,74 +1,53 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
+import { NextPage } from "next";
+import { useState } from "react";
 
-const Home: NextPage = () => {
+const Book = ({ className = "" }: { className: string }) => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className={className}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
+      />
+    </svg>
+  );
+};
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{" "}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
+const Login: NextPage = () => {
+  const [userName, setUserName] = useState("");
+  const [passWord, setPassWord] = useState("");
 
-        <p className="mt-3 text-2xl">
-          Get started by editing <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">pages/index.tsx</code>
-        </p>
+  return (
+    <div className="h-screen flex justify-center items-center">
+      <div className="flex flex-col w-80 items-center gap-3 font-bold text-slate-50">
+        <Book className="w-36 aspect-square stroke-slate-50" />
+        <h1 className="text-6xl">OpenGrader</h1>
+        <form className="flex flex-col w-full gap-3">
+          <input
+            type="text"
+            className="rounded-lg bg-gray-800 text-center h-10"
+            placeholder="Username"
+            onChange={(e) => setUserName(e.target.value)}
+          />
 
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">Find in-depth information about Next.js features and its API.</p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">Instantly deploy your Next.js site to a public URL with Vercel.</p>
-          </a>
-        </div>
-      </main>
-
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-        </a>
-      </footer>
+          <input
+            type="password"
+            className="rounded-lg bg-gray-800 text-center h-10"
+            placeholder="Password"
+            onChange={(e) => setPassWord(e.target.value)}
+          />
+        </form>
+        <button className="w-full h-10 bg-green-800 text-center rounded-lg">Login</button>
+      </div>
     </div>
   );
 };
 
-export default Home;
+export default Login;
