@@ -1,5 +1,5 @@
-import { HiExclamation, HiCheckCircle, HiClock, HiEye } from "react-icons/hi";
-import { alerts, student } from "../../types";
+import { alerts, AlertType, student } from "../../../types";
+import { SubmissionIcon } from "./SubmissionIcon";
 //warning,all good, late, plagarism
 
 const courseData = { courseName: "CSCE 4110.001" };
@@ -10,66 +10,50 @@ const studentData = [
     ID: "jcw0351",
     Grade: 94,
     SubmissionCount: 16,
-    Alerts: { Missing: 0, Plagarism: 0, Errors: 0 },
+    Alerts: { Missing: 0, Plagiarism: 0, Errors: 0 },
   },
   {
     Name: "Dayton Forehand",
     ID: "dcf0085",
     Grade: 61,
     SubmissionCount: 12,
-    Alerts: { Missing: 4, Plagarism: 0, Errors: 0 },
+    Alerts: { Missing: 4, Plagiarism: 0, Errors: 0 },
   },
   {
     Name: "Kobe Edmond",
     ID: "kde0091",
     Grade: 100,
     SubmissionCount: 16,
-    Alerts: { Missing: 0, Plagarism: 1, Errors: 0 },
+    Alerts: { Missing: 0, Plagiarism: 1, Errors: 0 },
   },
   {
     Name: "Dayton Forehand",
     ID: "dcf0085",
     Grade: 91,
     SubmissionCount: 15,
-    Alerts: { Missing: 0, Plagarism: 0, Errors: 1 },
+    Alerts: { Missing: 0, Plagiarism: 0, Errors: 1 },
   },
   {
     Name: "Julaian Garcia Hernandez",
     ID: "jgh0011",
     Grade: 85,
     SubmissionCount: 15,
-    Alerts: { Missing: 1, Plagarism: 1, Errors: 1 },
+    Alerts: { Missing: 1, Plagiarism: 1, Errors: 1 },
   },
 ];
 
 const Warnings = ({ Alerts }: { Alerts: alerts }) => {
-  const { Missing, Plagarism, Errors } = Alerts;
+  const { Missing, Plagiarism: Plagarism, Errors } = Alerts;
 
   if (Missing == 0 && Plagarism == 0 && Errors == 0) {
-    return (
-      <div className="text-green-500">
-        <HiCheckCircle />
-      </div>
-    );
+    return <SubmissionIcon count={0} />;
   }
 
   return (
-    <div className="text-lg flex">
-      {Missing != 0 && (
-        <div className="flex items-center text-lg text-yellow-500">
-          {Missing} <HiClock />
-        </div>
-      )}
-      {Errors != 0 && (
-        <div className="flex items-center text-orange-500">
-          {Errors} <HiExclamation />
-        </div>
-      )}
-      {Plagarism != 0 && (
-        <div className="flex items-center text-red-500">
-          {Plagarism} <HiEye />
-        </div>
-      )}
+    <div className="text-lg flex gap-1">
+      <SubmissionIcon alertType={AlertType.MISSING} count={Alerts.Missing} />
+      <SubmissionIcon alertType={AlertType.ERROR} count={Alerts.Errors} />
+      <SubmissionIcon alertType={AlertType.PLAGIARISM} count={Alerts.Plagiarism} />
     </div>
   );
 };

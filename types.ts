@@ -1,6 +1,6 @@
 export type alerts = {
   Missing: number;
-  Plagarism: number;
+  Plagiarism: number;
   Errors: number;
 };
 
@@ -11,3 +11,9 @@ export type student = {
   SubmissionCount: number;
   Alerts: alerts;
 };
+
+export enum AlertType {
+  MISSING,
+  PLAGIARISM,
+  ERROR,
+}
