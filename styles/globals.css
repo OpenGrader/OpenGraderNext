@@ -8,5 +8,5 @@
 }
 
 body {
-  background-color: #0f172a; /* Tailwind Slate 900 */
+ @apply bg-slate-900;
 }
