@@ -45,7 +45,7 @@ const studentData = [
 const Warnings = ({ Alerts }: { Alerts: alerts }) => {
   const { Missing, Plagarism, Errors } = Alerts;
 
-  if (Missing == 0 && Plagarism == 0 && Errors == 0) {
+  if (Missing === 0 && Plagarism === 0 && Errors === 0) {
     return (
       <div className="text-green-500">
         <HiCheckCircle />
