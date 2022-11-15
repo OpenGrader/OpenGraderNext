@@ -28,3 +28,16 @@ export enum AlertType {
   PLAGIARISM,
   ERROR,
 }
+
+export type TestCase ={
+  Details: string;
+  Correct?: string;
+  Output: string;
+  Errors?: string;
+  Results?: number;
+}
+
+export type ReportData = {
+  Warnings:TestCase;
+  Cases: Array<TestCase>;
+}
