@@ -4,6 +4,11 @@ export type alerts = {
   Errors: number;
 };
 
+export type pageData = {
+  parent: string;
+  courseID: string;
+}
+
 export type student = {
   Name: string;
   ID: string;
