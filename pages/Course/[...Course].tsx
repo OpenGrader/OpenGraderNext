@@ -2,6 +2,7 @@ import Sidebar from "../../Components/Sidebar";
 import Students from "../../Components/course-pages/Students";
 import Assignments from "../../Components/course-pages/Assignments";
 import { pageData } from "../../types";
+import GradeReport from "../../Components/course-pages/GradeReport";
 
 export async function getServerSideProps(context: any) {
   const data = context.query.Course;
@@ -18,6 +19,10 @@ const PageLoader = ({ page }: { page: string }) => {
       return <Assignments />;
       break;
 
+    case "Reports":
+      return <GradeReport />;
+      break;
+
     default:
       return <h1 className="font-bold text-3xl text-slate-50">INVALID PAGE</h1>;
       break;
@@ -28,8 +33,6 @@ const Page = ({ data }: { data: Array<string> }) => {
   let pData: pageData = { parent: "Homepage", courseID: data[0] || "" };
 
   if (data.length === 1) {
-    let data: pageData;
-
     return (
       <div className="flex">
         <Sidebar pageData={pData} />
