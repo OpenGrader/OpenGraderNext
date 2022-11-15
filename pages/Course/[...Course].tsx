@@ -1,6 +1,7 @@
 import Sidebar from "../../Components/Sidebar";
 import Students from "../../Components/course-pages/Students";
 import Assignments from "../../Components/course-pages/Assignments";
+import { pageData } from "../../types";
 
 export async function getServerSideProps(context: any) {
   const data = context.query.Course;
@@ -25,19 +26,25 @@ const PageLoader = ({ page }: { page: string }) => {
 
 const Page = ({ data }: { data: Array<string> }) => {
   const courseID = data[0] || "";
+  console.log(data.length);
+  let pData: pageData = { parent: "Homepage", courseID: data[0] || "" };
+
   if (data.length === 1) {
+    let data: pageData;
+
     return (
       <div className="flex">
-        <Sidebar parent="Homepage" courseID={courseID} />
+        <Sidebar pageData={pData} />
         <h1 className="font-bold text-3xl text-slate-50">Homepage</h1>
       </div>
     );
   }
 
   if (data.length == 2) {
+    pData.parent = data[1];
     return (
       <div className="flex">
-        <Sidebar parent={data[1]} courseID={courseID} />
+        <Sidebar pageData={pData} />
         <div className="w-10/12">
           <PageLoader page={data[1]} />
         </div>
