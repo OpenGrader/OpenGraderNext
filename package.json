@@ -8,6 +8,7 @@
     "format:fix": "prettier --write --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@tippyjs/react": "^4.2.6",
     "eslint": "^8.26.0",
     "eslint-config-next": "^13.0.2",
     "next": "^13.0.2",
