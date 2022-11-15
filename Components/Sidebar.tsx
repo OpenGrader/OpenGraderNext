@@ -2,6 +2,7 @@ import userIMG from "../public/UserPlaceholder.png";
 import { HiCog } from "react-icons/hi";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
+import { pageData } from "../types";
 
 const user = {
   name: "John D.",
@@ -42,7 +43,7 @@ const SideBarLinks = ({ parent, courseID }: { parent: string; courseID: string }
   );
 };
 
-const Sidebar = ({ parent, courseID }: { parent: string; courseID: string }) => {
+const Sidebar = ({ pageData:{parent, courseID} }: {pageData:pageData  }) => {
   const { name, position } = user;
   return (
     <div className="h-screen w-2/12 flex flex-col text-gray-50 bg-zinc-900 justify-between">
