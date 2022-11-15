@@ -30,11 +30,14 @@ export enum AlertType {
 }
 
 export type TestCase ={
+  Details: string;
+  Correct?: string;
   Output: string;
-  Results: number;
+  Errors?: string;
+  Results?: number;
 }
 
-export type GradeReport = {
-  CaseName: string;
+export type ReportData = {
+  Warnings:TestCase;
   Cases: Array<TestCase>;
 }
