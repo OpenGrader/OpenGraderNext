@@ -17,6 +17,12 @@ export type student = {
   Alerts: alerts;
 };
 
+export type assignment = {
+  Name: string;
+  SubmissionCount: number;
+  Warnings: number;
+};
+
 export enum AlertType {
   MISSING,
   PLAGIARISM,
