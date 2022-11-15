@@ -35,7 +35,7 @@ const AssignemntBlock = ({ data }: { data: assignment }) => {
             </div>
             <p>{SubmissionCount} submissions</p>
           </div>
-          {Warnings == 0 ? <h1>No issues</h1> : <h1 className="text-red-600">{Warnings} submission need attention</h1>}
+          {Warnings === 0 ? <h1>No issues</h1> : <h1 className="text-red-600">{Warnings} submission need attention</h1>}
         </div>
         <h1 className="text-slate-400">
           View | Edit | <span className="text-red-900">Delete</span>
