@@ -1,6 +1,7 @@
 import { HiCheckCircle, HiClock, HiExclamation, HiEye } from "react-icons/hi";
 import { AlertType } from "../../../types";
 import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
 
 type SubmissionIconProps = {
   alertType?: AlertType;

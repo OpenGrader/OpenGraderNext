@@ -22,7 +22,7 @@ const PageLoader = ({ page }: { page: string }) => {
 const Page = ({ data }: { data: Array<string> }) => {
   console.log(data.length);
   let pData: pageData = { parent: "Homepage", courseID: data[0] || "" };
-  
+
   if (data.length === 1) {
     let data: pageData;
 
@@ -35,7 +35,7 @@ const Page = ({ data }: { data: Array<string> }) => {
   }
 
   if (data.length == 2) {
-    pData.parent = data[1]
+    pData.parent = data[1];
     return (
       <div className="flex">
         <Sidebar pageData={pData} />
