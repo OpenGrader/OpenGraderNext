@@ -23,15 +23,6 @@ const Cases: Array<TestCase> = [
   },
 ];
 
-const CodeBlock = ({ header, text }: { header: string; text: string }) => {
-  return (
-    <div>
-      <h1>{text}</h1>
-      <ConsoleText text={text} />
-    </div>
-  );
-};
-
 const ReportBlock = ({ Details, Correct, Output, Errors, Results }: TestCase) => {
   return (
     <div className="bg-slate-800 w-full p-4 rounded-md flex flex-col gap-4">

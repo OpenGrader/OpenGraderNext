@@ -3,6 +3,7 @@ import Students from "../../Components/course-pages/Students";
 import Assignments from "../../Components/course-pages/Assignments";
 import { pageData } from "../../types";
 import GradeReport from "../../Components/course-pages/GradeReport";
+import ClassReport from "../../Components/course-pages/ClassReport";
 
 export async function getServerSideProps(context: any) {
   const data = context.query.Course;
@@ -20,7 +21,8 @@ const PageLoader = ({ page }: { page: string }) => {
       break;
 
     case "Reports":
-      return <GradeReport />;
+      // return <GradeReport />;
+      return <ClassReport />;
       break;
 
     default:
