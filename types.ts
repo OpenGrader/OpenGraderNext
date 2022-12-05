@@ -12,7 +12,9 @@ export type pageData = {
 export type Student = {
   name: string;
   id: string;
+
   euid: string;
+
   grade: number;
   submissionCount: number;
   alerts: Alerts;

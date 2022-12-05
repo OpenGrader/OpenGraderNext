@@ -5,6 +5,7 @@ import withProtected from "util/withProtected";
 import { queryParamToNumber } from "util/misc";
 import Sidebar from "Components/Sidebar";
 import { createBrowserSupabaseClient, createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+
 //warning,all good, late, plagarism
 
 interface StudentsProps {
@@ -76,13 +77,16 @@ const Warnings = ({ Alerts }: { Alerts: Alerts }) => {
   );
 };
 
+
 const StudentBlock: React.FC<Student> = (student) => {
+
   return (
     <div className="bg-slate-800 w-full p-3 rounded-md">
       <div className="flex justify-between">
         <div className="flex flex-col gap-4">
           <div className="">
             <div className="text-xl flex gap-2 items-center">
+
               <p className="text-xl font-bold">{student.name}</p>
               <p className="">({student.euid})</p>
               <Warnings Alerts={student.alerts} />
