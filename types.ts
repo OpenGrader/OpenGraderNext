@@ -41,3 +41,26 @@ export type ReportData = {
   warnings: TestCase;
   cases: Array<TestCase>;
 };
+
+export type Course = {
+  id: number;
+  department: string;
+  number: string;
+};
+
+export type Section = {
+  id: number;
+  section_number: string;
+  course: Course;
+};
+
+export type Assignment = {
+  id: number;
+  title: string;
+  description: string;
+  is_open: boolean;
+  is_late: boolean;
+  section: Section;
+  submissionCount: number;
+  warnings: number;
+};

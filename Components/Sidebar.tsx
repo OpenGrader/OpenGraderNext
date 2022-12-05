@@ -8,10 +8,11 @@ const user = {
 };
 
 const SideBarLinks = () => {
-  const Options = [
-    { text: "Assignments", link: "assignment" },
-    { text: "Students", link: "student" },
-    { text: "Reports", link: "report" },
+  const routes = [
+    { text: "Courses", link: "" },
+    { text: "Assignments", link: ":course/assignment" },
+    { text: "Students", link: ":course/student" },
+    { text: "Reports", link: ":course/report" },
   ];
 
   const router = useRouter();
@@ -19,13 +20,16 @@ const SideBarLinks = () => {
   let courseId = "-1";
   if (splitPath.length >= 3) {
     courseId = splitPath[2];
+  } else {
+    routes.splice(1, routes.length - 1);
   }
 
   return (
     <>
-      {Options.map((option, index) => {
-        const link = "/course/" + courseId + "/" + option.link;
-        if (router.asPath.toString() === link)
+      {routes.map((option, index) => {
+        const link = "/course/" + option.link.replace(":course", courseId);
+        // replaceAll is a hack
+        if (router.asPath.toString().replaceAll("/", "") === link.replaceAll("/", ""))
           return (
             <Link
               href={link}
