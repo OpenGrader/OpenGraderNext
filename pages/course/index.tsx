@@ -28,7 +28,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
       .from("section")
       .select(
         `id,
-        course (
+      course (
         department,
         number
       ),

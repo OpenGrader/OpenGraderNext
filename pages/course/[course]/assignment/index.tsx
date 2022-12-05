@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 import { Assignment } from "../../../../types";
 import { HiPlusCircle } from "react-icons/hi";
 import { GetServerSidePropsContext, NextPage } from "next";
@@ -7,7 +6,6 @@ import withProtected from "../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../util/misc";
 import Sidebar from "../../../../Components/Sidebar";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-
 //warning,all good, late, plagarism
 
 interface AssignmentListProps {
@@ -59,7 +57,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
 
 const AssignmentBlock: React.FC<Assignment> = (assignment) => {
   const { title, description, submissionCount, warnings, section } = assignment;
-
   return (
     <div className="bg-slate-800 w-full p-3 rounded-md">
       <div className="flex justify-between">

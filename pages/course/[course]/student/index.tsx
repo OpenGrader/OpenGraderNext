@@ -4,6 +4,8 @@ import { GetServerSidePropsContext, NextPage } from "next";
 import withProtected from "util/withProtected";
 import { queryParamToNumber } from "util/misc";
 import Sidebar from "Components/Sidebar";
+import { createBrowserSupabaseClient, createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+
 //warning,all good, late, plagarism
 
 interface StudentsProps {
@@ -14,46 +16,40 @@ interface StudentsProps {
 export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async (ctx) => {
     const courseId = queryParamToNumber(ctx.query?.course);
+    const supabase = createServerSupabaseClient(ctx);
 
-    const course = { id: courseId, department: "CSCE", number: "4110" };
+    const { data: course } = await supabase
+      .from("section")
+      .select("id, section_number, course ( id, department, number )")
+      .filter("id", "eq", courseId);
 
-    const students: Student[] = [
-      {
-        name: "Jackson Welsh",
-        id: "jcw0351",
-        grade: 94,
-        submissionCount: 16,
-        alerts: { missing: 0, plagiarism: 0, errors: 0 },
-      },
-      {
-        name: "Dayton Forehand",
-        id: "dcf0085",
-        grade: 61,
-        submissionCount: 12,
-        alerts: { missing: 4, plagiarism: 0, errors: 0 },
-      },
-      {
-        name: "Kobe Edmond",
-        id: "kde0091",
-        grade: 100,
-        submissionCount: 16,
-        alerts: { missing: 0, plagiarism: 1, errors: 0 },
-      },
-      {
-        name: "Dayton Forehand",
-        id: "dcf0085",
-        grade: 91,
-        submissionCount: 15,
-        alerts: { missing: 0, plagiarism: 0, errors: 1 },
-      },
-      {
-        name: "Julaian Garcia Hernandez",
-        id: "jgh0011",
-        grade: 85,
-        submissionCount: 15,
-        alerts: { missing: 1, plagiarism: 1, errors: 1 },
-      },
-    ];
+    const students = await supabase
+      .from("user")
+      .select("id, given_name, family_name, euid, section ( id ), membership ( id, role )")
+      .eq("section.id", courseId)
+      .order("family_name, given_name")
+      .then(({ data, error }) => {
+        console.log(error);
+        console.log(JSON.stringify(data));
+        return data
+          ?.filter(
+            (d) => (d.membership as any[])?.map((m) => m.role).includes("STUDENT") && (d.section as any[]).length > 0,
+          ) // hack to only include students
+          .map(
+            (d) =>
+              ({
+                ...d,
+                name: d.given_name + " " + d.family_name,
+                submissionCount: Math.floor(Math.random() * 12),
+                alerts: {
+                  errors: Math.floor(Math.random() * 3),
+                  plagiarism: Math.floor(Math.random() * 2),
+                  missing: Math.floor(Math.random() * 4),
+                },
+                grade: Math.floor(Math.random() * 40 + 60),
+              } as Student),
+          );
+      });
 
     return {
       props: {
@@ -81,21 +77,23 @@ const Warnings = ({ Alerts }: { Alerts: Alerts }) => {
   );
 };
 
-const StudentBlock = ({ data }: { data: Student }) => {
-  const { name: Name, id: ID, grade: Grade, submissionCount: SubmissionCount, alerts: Alerts } = data;
+
+const StudentBlock: React.FC<Student> = (student) => {
+
   return (
     <div className="bg-slate-800 w-full p-3 rounded-md">
       <div className="flex justify-between">
         <div className="flex flex-col gap-4">
           <div className="">
             <div className="text-xl flex gap-2 items-center">
-              <p className="text-xl font-bold">{Name}</p>
-              <p className="">({ID})</p>
-              <Warnings Alerts={Alerts} />
+
+              <p className="text-xl font-bold">{student.name}</p>
+              <p className="">({student.euid})</p>
+              <Warnings Alerts={student.alerts} />
             </div>
-            <p>{SubmissionCount} submissions</p>
+            <p>{student.submissionCount} submissions</p>
           </div>
-          <h1>Current Grade: {Grade}%</h1>
+          <h1>Current Grade: {student.grade}%</h1>
         </div>
         <h1 className="text-slate-400">
           View | Edit | <span className="text-red-900">Delete</span>
@@ -118,7 +116,7 @@ const Students: NextPage<StudentsProps> = ({ students, course }) => {
         </h1>
         <div className="flex flex-col gap-6 overflow-auto">
           {students.map((student, index) => {
-            return <StudentBlock data={student} key={index} />;
+            return <StudentBlock {...student} key={index} />;
           })}
         </div>
       </div>
