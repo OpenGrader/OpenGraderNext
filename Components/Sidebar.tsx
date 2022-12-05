@@ -15,8 +15,11 @@ const SideBarLinks = () => {
   ];
 
   const router = useRouter();
+
+  // split path into parts
   const splitPath = router.asPath.split("/");
   let courseId = "-1";
+  // course ID is third component of path, grab that
   if (splitPath.length >= 3) {
     courseId = splitPath[2];
   }
