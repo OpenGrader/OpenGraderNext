@@ -1,17 +1,12 @@
 import Link from "next/link";
-import { assignment } from "../../../../types";
+import { Assignment } from "../../../../types";
 import { HiPlusCircle } from "react-icons/hi";
 import { GetServerSidePropsContext, NextPage } from "next";
 import withProtected from "../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../util/misc";
 import Sidebar from "../../../../Components/Sidebar";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 //warning,all good, late, plagarism
-
-type Assignment = {
-  name: string;
-  submissionCount: number;
-  warnings: number;
-};
 
 interface AssignmentListProps {
   assignments: Assignment[];
@@ -28,29 +23,26 @@ interface AssignmentListProps {
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async (ctx) => {
-    const courseId = queryParamToNumber(ctx.query?.course);
-    const assignments = [
-      {
-        name: "Assignment 1",
-        submissionCount: 16,
-        warnings: 0,
-      },
-      {
-        name: "Assignment 2",
-        submissionCount: 12,
-        warnings: 2,
-      },
-      {
-        name: "Assignment 3",
-        submissionCount: 20,
-        warnings: 0,
-      },
-    ];
+    const supabase = createServerSupabaseClient(ctx);
+    const sectionId = queryParamToNumber(ctx.query?.course);
+    const { error, data } = await supabase
+      .from("assignment")
+      .select(
+        "id, title, description, is_open, is_late, section ( course ( id, department, number ), section_number, id )",
+      )
+      .filter("section", "eq", sectionId)
+      .order("created_at", { ascending: false });
+
+    const assignments = data?.map((d) => ({
+      ...d,
+      submissionCount: Math.floor(Math.random() * 64),
+      warnings: Math.floor(Math.random() * 16),
+    }));
 
     return {
       props: {
         course: {
-          id: courseId,
+          id: sectionId,
           department: "CSCE",
           number: "4110",
         },
@@ -63,15 +55,15 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
     };
   });
 
-const AssignmentBlock = ({ data }: { data: Assignment }) => {
-  const { name, submissionCount, warnings } = data;
+const AssignmentBlock: React.FC<Assignment> = (assignment) => {
+  const { title, description, submissionCount, warnings, section } = assignment;
   return (
     <div className="bg-slate-800 w-full p-3 rounded-md">
       <div className="flex justify-between">
         <div className="flex flex-col gap-4">
           <div className="">
             <div className="text-xl flex gap-2 items-center">
-              <p className="text-xl font-bold">{name}</p>
+              <p className="text-xl font-bold">{title}</p>
             </div>
             <p>{submissionCount} submissions</p>
           </div>
@@ -108,7 +100,7 @@ const Assignments: NextPage<AssignmentListProps> = ({ assignments, course, secti
         </div>
         <div className="flex flex-col gap-6">
           {assignments.map((assignment, index) => {
-            return <AssignmentBlock data={assignment} key={index} />;
+            return <AssignmentBlock {...assignment} key={index} />;
           })}
         </div>
       </div>

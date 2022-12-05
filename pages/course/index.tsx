@@ -3,6 +3,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Sidebar from "Components/Sidebar";
 import { GetServerSidePropsContext, NextPage } from "next";
 import Link from "next/link";
+import { Assignment } from "types";
 import withProtected from "util/withProtected";
 
 type CourseSection = {
@@ -12,6 +13,7 @@ type CourseSection = {
     department: string;
     number: string;
   };
+  assignment: Assignment[];
 };
 
 interface CourseListProps {
@@ -22,14 +24,24 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async (ctx) => {
     const supabase = createServerSupabaseClient(ctx);
 
-    const sections = await supabase.from("section").select(`id,
+    const sections = await supabase
+      .from("section")
+      .select(
+        `id,
       course (
         department,
         number
       ),
-      section_number`);
-
-    console.log({ sections: sections.data, courses: sections.data?.map((d) => d.course) });
+      assignment (
+        id,
+        title,
+        created_at,
+        is_open,
+        is_late
+      ),
+      section_number`,
+      )
+      .order("created_at", { foreignTable: "assignment", ascending: false });
 
     return {
       props: {
@@ -38,13 +50,27 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
     };
   });
 
-const SectionCard: React.FC<CourseSection> = ({ id, section_number, course }) => {
+const makeInfoString = (assignment: Assignment): string => {
+  const ret = [];
+  if (assignment.is_open) {
+    ret.push("open");
+    if (assignment.is_late) {
+      ret.push("late");
+    }
+  } else {
+    ret.push("closed");
+  }
+
+  return `(${ret.join(", ")})`;
+};
+
+const SectionCard: React.FC<CourseSection> = ({ id, section_number, course, assignment }) => {
   return (
     <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-slate-800 shadow w-full">
-      <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-2">
+      <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-4">
         {course.department} {course.number}.{section_number}{" "}
         <Link
-          href={`/course/${id}`}
+          href={`/course/${id}/assignment`}
           className="inline-flex items-center rounded border border-transparent bg-cyan-700 px-2.5 py-1 text-xs font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
           View course
         </Link>
@@ -53,9 +79,11 @@ const SectionCard: React.FC<CourseSection> = ({ id, section_number, course }) =>
         <div>
           <strong className="font-semibold">Recent assignments</strong>
           <ul>
-            <li>Basic Sorting (open)</li>
-            <li>Introduction to Variables (open, late)</li>
-            <li>Try OpenGrader (closed)</li>
+            {assignment.map((a) => (
+              <li key={a.id}>
+                {a.title} {makeInfoString(a)}
+              </li>
+            ))}
           </ul>
         </div>
         <div>
