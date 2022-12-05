@@ -29,3 +29,5 @@ const AssignmentView: NextPage<AssignmentProps> = ({ id, courseId }) => {
     </div>
   );
 };
+
+export default AssignmentView;

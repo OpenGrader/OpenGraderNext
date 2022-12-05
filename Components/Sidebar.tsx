@@ -1,4 +1,3 @@
-import { HiCog } from "react-icons/hi";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import UserMenu from "./UserMenu";
@@ -21,7 +20,6 @@ const SideBarLinks = () => {
   if (splitPath.length >= 3) {
     courseId = splitPath[2];
   }
-  console.log({ courseId });
 
   return (
     <>
