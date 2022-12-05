@@ -1,20 +1,20 @@
-export type alerts = {
-  Missing: number;
-  Plagiarism: number;
-  Errors: number;
+export type Alerts = {
+  missing: number;
+  plagiarism: number;
+  errors: number;
 };
 
 export type pageData = {
   parent: string;
   courseID: string;
-}
+};
 
-export type student = {
-  Name: string;
-  ID: string;
-  Grade: number;
-  SubmissionCount: number;
-  Alerts: alerts;
+export type Student = {
+  name: string;
+  id: string;
+  grade: number;
+  submissionCount: number;
+  alerts: Alerts;
 };
 
 export type assignment = {
@@ -29,15 +29,15 @@ export enum AlertType {
   ERROR,
 }
 
-export type TestCase ={
-  Details: string;
-  Correct?: string;
-  Output: string;
-  Errors?: string;
-  Results?: number;
-}
+export type TestCase = {
+  details: string;
+  correct?: string;
+  output: string;
+  errors?: string;
+  results?: number;
+};
 
 export type ReportData = {
-  Warnings:TestCase;
-  Cases: Array<TestCase>;
-}
+  warnings: TestCase;
+  cases: Array<TestCase>;
+};

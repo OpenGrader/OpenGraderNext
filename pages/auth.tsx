@@ -14,7 +14,7 @@ const AuthPage: NextPage = () => {
 
   useEffect(() => {
     if (session?.user) {
-      router.push("/Course/575757");
+      router.push("/course/575757");
     }
   }, [session?.user]);
 
