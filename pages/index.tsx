@@ -7,7 +7,7 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async () => {
     return {
       redirect: {
-        destination: "/course/52272",
+        destination: "/course",
         permanent: false,
       },
     };

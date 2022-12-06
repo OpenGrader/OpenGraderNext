@@ -6,6 +6,7 @@ import withProtected from "../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../util/misc";
 import Sidebar from "../../../../Components/Sidebar";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/router";
 //warning,all good, late, plagarism
 
 interface AssignmentListProps {
@@ -56,7 +57,9 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
   });
 
 const AssignmentBlock: React.FC<Assignment> = (assignment) => {
-  const { title, description, submissionCount, warnings, section } = assignment;
+  const { title, submissionCount, warnings, id } = assignment;
+  const router = useRouter();
+
   return (
     <div className="bg-slate-800 w-full p-3 rounded-md">
       <div className="flex justify-between">
@@ -76,7 +79,7 @@ const AssignmentBlock: React.FC<Assignment> = (assignment) => {
           )}
         </div>
         <h1 className="text-slate-400">
-          View | Edit | <span className="text-red-900">Delete</span>
+          <Link href={`${router.asPath}/${id}`}>View</Link> | Edit | <span className="text-red-900">Delete</span>
         </h1>
       </div>
     </div>
@@ -85,11 +88,11 @@ const AssignmentBlock: React.FC<Assignment> = (assignment) => {
 
 const Assignments: NextPage<AssignmentListProps> = ({ assignments, course, section }) => {
   const courseName = `${course.department} ${course.number}.${section.number}`;
-  const pageData = { parent: "Homepage", courseID: course.id.toString() };
+
   return (
     <div className="flex">
       <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-full ">
+      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-full">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Assignments - {courseName}</h1>
           <Link href={"#"} className="">
