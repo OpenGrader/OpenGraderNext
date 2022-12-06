@@ -6,6 +6,7 @@ import withProtected from "../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../util/misc";
 import Sidebar from "../../../../Components/Sidebar";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/router";
 //warning,all good, late, plagarism
 
 interface AssignmentListProps {
@@ -21,6 +22,11 @@ interface AssignmentListProps {
   };
 }
 
+type ReturnedSubmission = {
+  id: number;
+  flags: string[];
+};
+
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async (ctx) => {
     const supabase = createServerSupabaseClient(ctx);
@@ -28,16 +34,21 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
     const { error, data } = await supabase
       .from("assignment")
       .select(
-        "id, title, description, is_open, is_late, section ( course ( id, department, number ), section_number, id )",
+        "id, title, description, is_open, is_late, section ( course ( id, department, number ), section_number, id ), submission ( id, flags )",
       )
       .filter("section", "eq", sectionId)
       .order("created_at", { ascending: false });
 
-    const assignments = data?.map((d) => ({
-      ...d,
-      submissionCount: Math.floor(Math.random() * 64),
-      warnings: Math.floor(Math.random() * 16),
-    }));
+    console.error(error);
+
+    const assignments = data?.map((d) => {
+      const submission = d.submission as ReturnedSubmission[] | null;
+      return {
+        ...d,
+        submissionCount: submission?.length,
+        warnings: submission?.filter((v) => v.flags?.length > 0).length,
+      };
+    });
 
     return {
       props: {
@@ -56,7 +67,9 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
   });
 
 const AssignmentBlock: React.FC<Assignment> = (assignment) => {
-  const { title, description, submissionCount, warnings, section } = assignment;
+  const { title, submissionCount, warnings, id } = assignment;
+  const router = useRouter();
+
   return (
     <div className="bg-slate-800 w-full p-3 rounded-md">
       <div className="flex justify-between">
@@ -65,7 +78,9 @@ const AssignmentBlock: React.FC<Assignment> = (assignment) => {
             <div className="text-xl flex gap-2 items-center">
               <p className="text-xl font-bold">{title}</p>
             </div>
-            <p>{submissionCount} submissions</p>
+            <p>
+              {submissionCount} submission{submissionCount === 1 ? "" : "s"}
+            </p>
           </div>
           {warnings === 0 ? (
             <h1>No issues</h1>
@@ -76,7 +91,7 @@ const AssignmentBlock: React.FC<Assignment> = (assignment) => {
           )}
         </div>
         <h1 className="text-slate-400">
-          View | Edit | <span className="text-red-900">Delete</span>
+          <Link href={`${router.asPath}/${id}`}>View</Link> | Edit | <span className="text-red-900">Delete</span>
         </h1>
       </div>
     </div>
@@ -85,11 +100,11 @@ const AssignmentBlock: React.FC<Assignment> = (assignment) => {
 
 const Assignments: NextPage<AssignmentListProps> = ({ assignments, course, section }) => {
   const courseName = `${course.department} ${course.number}.${section.number}`;
-  const pageData = { parent: "Homepage", courseID: course.id.toString() };
+
   return (
     <div className="flex">
       <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-full ">
+      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-full">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Assignments - {courseName}</h1>
           <Link href={"#"} className="">
