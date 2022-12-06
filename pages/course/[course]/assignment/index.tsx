@@ -22,6 +22,11 @@ interface AssignmentListProps {
   };
 }
 
+type ReturnedSubmission = {
+  id: number;
+  flags: string[];
+};
+
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async (ctx) => {
     const supabase = createServerSupabaseClient(ctx);
@@ -29,16 +34,21 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
     const { error, data } = await supabase
       .from("assignment")
       .select(
-        "id, title, description, is_open, is_late, section ( course ( id, department, number ), section_number, id )",
+        "id, title, description, is_open, is_late, section ( course ( id, department, number ), section_number, id ), submission ( id, flags )",
       )
       .filter("section", "eq", sectionId)
       .order("created_at", { ascending: false });
 
-    const assignments = data?.map((d) => ({
-      ...d,
-      submissionCount: Math.floor(Math.random() * 64),
-      warnings: Math.floor(Math.random() * 16),
-    }));
+    console.error(error);
+
+    const assignments = data?.map((d) => {
+      const submission = d.submission as ReturnedSubmission[] | null;
+      return {
+        ...d,
+        submissionCount: submission?.length,
+        warnings: submission?.filter((v) => v.flags?.length > 0).length,
+      };
+    });
 
     return {
       props: {
@@ -68,7 +78,9 @@ const AssignmentBlock: React.FC<Assignment> = (assignment) => {
             <div className="text-xl flex gap-2 items-center">
               <p className="text-xl font-bold">{title}</p>
             </div>
-            <p>{submissionCount} submissions</p>
+            <p>
+              {submissionCount} submission{submissionCount === 1 ? "" : "s"}
+            </p>
           </div>
           {warnings === 0 ? (
             <h1>No issues</h1>

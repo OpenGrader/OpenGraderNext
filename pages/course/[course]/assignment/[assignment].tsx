@@ -1,5 +1,6 @@
 import { GetServerSidePropsContext, NextPage } from "next";
 import Sidebar from "../../../../Components/Sidebar";
+import Badge, { BadgeVariant } from "Components/Badge";
 import withProtected from "../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../util/misc";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
@@ -54,8 +55,6 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
       .order("created_at", { foreignTable: "submission", ascending: false })
       .single();
 
-    console.log(JSON.stringify(assignmentData.data ?? "{}"));
-
     return {
       props: {
         id: assignmentId,
@@ -65,26 +64,25 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
     };
   });
 
-const flagClass = (flag: string): string => {
+const flagClass = (flag: string): BadgeVariant => {
   switch (flag) {
     case "ERROR":
-      return "rounded bg-red-800 text-red-50 px-2.5 py-0.5 text-sm font-semibold";
+      return "red";
     case "PLAGIARISM":
-      return "rounded bg-orange-800 text-orange-50 px-2.5 py-0.5 text-sm font-semibold";
+      return "orange";
     case "MISSING":
-      return "rounded bg-pink-800 text-pink-50 px-2.5 py-0.5 text-sm font-semibold";
+      return "pink";
+    default:
+      return "cyan";
   }
-  return "rounded bg-cyan-800 text-cyan-50 px-2.5 py-0.5 text-sm font-semibold";
 };
 
 const SubmissionCard: React.FC<Submission> = (submission) => {
   return (
     <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-slate-800 shadow w-full">
-      <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-4">
+      <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-2">
         {submission.student.given_name} {submission.student.family_name}{" "}
-        {submission.is_late && (
-          <span className="rounded bg-red-800 text-red-50 px-2.5 py-0.5 text-xs font-semibold">Late</span>
-        )}
+        {submission.is_late && <Badge variant="red">Late</Badge>}
       </div>
       <div className="px-4 py-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-2">
         <div>
@@ -95,7 +93,7 @@ const SubmissionCard: React.FC<Submission> = (submission) => {
           <div className="font-bold">Flags</div>
           <div className="flex gap-2 flex-wrap my-1">
             {submission.flags
-              ? submission.flags.map((flag) => <span className={flagClass(flag)}>{flag}</span>)
+              ? submission.flags.map((flag) => <Badge variant={flagClass(flag)}>{flag}</Badge>)
               : "No flags"}
           </div>
         </div>
@@ -109,7 +107,21 @@ const AssignmentView: NextPage<AssignmentProps> = ({ assignment }) => {
     <div className="flex">
       <Sidebar />
       <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-full">
-        <h1 className="font-bold text-3xl text-slate-50">Assignment: {assignment.title}</h1>
+        <h1 className="font-bold text-3xl text-slate-50 flex flex-wrap items-center gap-4">
+          Assignment: {assignment.title}{" "}
+          {assignment.is_open ? (
+            <>
+              <Badge variant="green">Open</Badge>
+              {assignment.is_late ? (
+                <Badge variant="orange">New submissions are late</Badge>
+              ) : (
+                <Badge variant="cyan">Ready for submissions</Badge>
+              )}
+            </>
+          ) : (
+            <Badge variant="red">Locked</Badge>
+          )}{" "}
+        </h1>
         <p>{assignment.description}</p>
         <h2 className="font-semibold text-2xl text-slate-50">Submissions</h2>
         {assignment.submission.map(SubmissionCard)}
