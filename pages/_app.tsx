@@ -10,11 +10,10 @@ function MyApp({ Component, pageProps }: AppProps<{ initialSession: Session }>) 
 
   return (
     <>
-      <Head>
-        <title>OpenGrader</title>
-      </Head>
-
       <SessionContextProvider supabaseClient={supabase} initialSession={pageProps.initialSession}>
+        <Head>
+          <title>OpenGrader</title>
+        </Head>
         <Component {...pageProps} />
       </SessionContextProvider>
     </>
