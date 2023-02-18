@@ -29,8 +29,7 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
       .eq("section.id", courseId)
       .order("family_name, given_name")
       .then(({ data, error }) => {
-        console.log(error);
-        console.log(JSON.stringify(data));
+        console.error(error);
         return data
           ?.filter(
             (d) => (d.membership as any[])?.map((m) => m.role).includes("STUDENT") && (d.section as any[]).length > 0,
