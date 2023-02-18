@@ -129,7 +129,7 @@ const SectionCard: React.FC<CourseSection & { submissions: Array<FormattedSubmis
   submissions,
 }) => {
   return (
-    <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-slate-800 shadow w-full">
+    <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-slate-800 shadow w-10/12 ml-auto">
       <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-4">
         {course.department} {course.number}.{section_number}{" "}
         <Link

@@ -104,7 +104,7 @@ const Assignments: NextPage<AssignmentListProps> = ({ assignments, course, secti
   return (
     <div className="flex">
       <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-full">
+      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Assignments - {courseName}</h1>
           <Link href={"#"} className="">

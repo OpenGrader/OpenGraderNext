@@ -77,16 +77,13 @@ const Warnings = ({ Alerts }: { Alerts: Alerts }) => {
   );
 };
 
-
 const StudentBlock: React.FC<Student> = (student) => {
-
   return (
     <div className="bg-slate-800 w-full p-3 rounded-md">
       <div className="flex justify-between">
         <div className="flex flex-col gap-4">
           <div className="">
             <div className="text-xl flex gap-2 items-center">
-
               <p className="text-xl font-bold">{student.name}</p>
               <p className="">({student.euid})</p>
               <Warnings Alerts={student.alerts} />
@@ -110,7 +107,7 @@ const Students: NextPage<StudentsProps> = ({ students, course }) => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 h-screen w-full">
+      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 h-screen w-10/12 ml-auto">
         <h1 className="text-3xl font-bold">
           Students - {course.department} {course.number}
         </h1>

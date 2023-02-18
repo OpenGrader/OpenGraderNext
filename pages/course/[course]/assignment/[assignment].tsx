@@ -112,7 +112,7 @@ const AssignmentView: NextPage<AssignmentProps> = ({ assignment }) => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-full">
+      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
         <h1 className="font-bold text-3xl text-slate-50 flex flex-wrap items-center gap-4">
           Assignment: {assignment.title}{" "}
           {assignment.is_open ? (

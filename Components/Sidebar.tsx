@@ -55,7 +55,7 @@ const SideBarLinks = () => {
 const Sidebar = () => {
   const { name, position } = user;
   return (
-    <div className="h-screen w-2/12 flex flex-col text-gray-50 bg-zinc-900 justify-between">
+    <div className="h-screen fixed w-2/12 flex flex-col text-gray-50 bg-zinc-900 justify-between">
       <div className=" p-3 flex flex-col gap-6 font-bold">
         <h1 className="text-center text-3xl">OpenGrader</h1>
         <SideBarLinks />
