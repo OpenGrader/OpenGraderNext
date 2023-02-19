@@ -66,4 +66,17 @@ export type Assignment = {
   section: Section;
   submissionCount: number;
   warnings: number;
+  submission: Submission[];
+};
+
+export type Submission = {
+  id: number;
+  created_at: Date;
+  assignment: number;
+  student: number | Student | null;
+  is_late: boolean;
+  score: number;
+  flags: string[] | null;
+  submission_loc: string | null;
+  feedback: string | null;
 };

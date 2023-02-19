@@ -34,7 +34,7 @@ const SideBarLinks = () => {
             <Link
               href={link}
               key={index}
-              className="bg-slate-900 h-10 w-full rounded-lg text-left px-2 flex items-center">
+              className="bg-slate-700 font-semibold w-full rounded-lg text-left px-4 py-2 flex items-center transition-all">
               {option.text}
             </Link>
           );
@@ -43,7 +43,7 @@ const SideBarLinks = () => {
             <Link
               href={link}
               key={index}
-              className="bg-slate-800 h-10 w-full rounded-lg text-left px-2 flex items-center">
+              className="w-full rounded-lg text-left px-4 py-2 flex items-center hover:bg-slate-800 focus:bg-slate-700 focus:text-slate-50 focus:animate-pulse transition-all text-slate-200">
               {option.text}
             </Link>
           );
@@ -55,16 +55,16 @@ const SideBarLinks = () => {
 const Sidebar = () => {
   const { name, position } = user;
   return (
-    <div className="h-screen w-2/12 flex flex-col text-gray-50 bg-zinc-900 justify-between">
-      <div className=" p-3 flex flex-col gap-6 font-bold">
-        <h1 className="text-center text-3xl">OpenGrader</h1>
+    <div className="h-screen fixed w-2/12 flex flex-col text-slate-50 bg-slate-950 justify-between pt-6">
+      <div className="px-3 flex flex-col gap-3">
+        <h1 className="text-center text-3xl font-bold mb-6">OpenGrader</h1>
         <SideBarLinks />
       </div>
-      <div className="w-full h-20 px-4 flex items-center justify-between bg-zinc-800">
+      <div className="w-full h-20 px-4 flex items-center justify-between bg-slate-800">
         <div className="flex items-center gap-4">
           <img src="/UserPlaceholder.png" className="h-12 aspect-square p-2 rounded-full" alt="" />
           <div className="">
-            <h2 className="text-gray-200">{name}</h2>
+            <h2 className="text-slate-200">{name}</h2>
             <h3 className="font-bold">{position}</h3>
           </div>
         </div>

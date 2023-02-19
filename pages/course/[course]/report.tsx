@@ -80,7 +80,7 @@ const GradeReport: NextPage<ReportProps> = ({ warnings, cases }) => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 h-screen w-full">
+      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 min-h-screen w-10/12 ml-auto">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Assignment 1 Grade Report - KDE0091</h1>
         </div>

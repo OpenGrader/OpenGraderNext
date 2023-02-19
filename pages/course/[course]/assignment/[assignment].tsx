@@ -78,11 +78,17 @@ const flagClass = (flag: string): BadgeVariant => {
 };
 
 const SubmissionCard: React.FC<Submission> = (submission) => {
+  let studentDesc: string;
+  if (submission.student.given_name || submission.student.family_name) {
+    studentDesc = `${submission.student.given_name} ${submission.student.family_name}`;
+  } else {
+    studentDesc = submission.student.euid;
+  }
+
   return (
     <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-slate-800 shadow w-full">
       <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-2">
-        {submission.student.given_name} {submission.student.family_name}{" "}
-        {submission.is_late && <Badge variant="red">Late</Badge>}
+        {studentDesc} {submission.is_late && <Badge variant="red">Late</Badge>}
       </div>
       <div className="px-4 py-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-2">
         <div>
@@ -92,7 +98,7 @@ const SubmissionCard: React.FC<Submission> = (submission) => {
         <div>
           <div className="font-bold">Flags</div>
           <div className="flex gap-2 flex-wrap my-1">
-            {submission.flags
+            {submission.flags && submission.flags.length > 0
               ? submission.flags.map((flag) => <Badge variant={flagClass(flag)}>{flag}</Badge>)
               : "No flags"}
           </div>
@@ -106,7 +112,7 @@ const AssignmentView: NextPage<AssignmentProps> = ({ assignment }) => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-full">
+      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
         <h1 className="font-bold text-3xl text-slate-50 flex flex-wrap items-center gap-4">
           Assignment: {assignment.title}{" "}
           {assignment.is_open ? (
