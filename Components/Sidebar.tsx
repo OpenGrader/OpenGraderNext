@@ -1,5 +1,7 @@
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import UserMenu from "./UserMenu";
 
 const user = {
@@ -53,7 +55,16 @@ const SideBarLinks = () => {
 };
 
 const Sidebar = () => {
-  const { name, position } = user;
+  const supabase = useSupabaseClient();
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setEmail(data.user?.email ?? "unknown user");
+    });
+  }, []);
+  const position = "Teacher";
+
   return (
     <div className="h-screen fixed w-2/12 flex flex-col text-slate-50 bg-slate-950 justify-between pt-6">
       <div className="px-3 flex flex-col gap-3">
@@ -64,7 +75,7 @@ const Sidebar = () => {
         <div className="flex items-center gap-4">
           <img src="/UserPlaceholder.png" className="h-12 aspect-square p-2 rounded-full" alt="" />
           <div className="">
-            <h2 className="text-slate-200">{name}</h2>
+            <h2 className="text-slate-200 text-sm">{email}</h2>
             <h3 className="font-bold">{position}</h3>
           </div>
         </div>

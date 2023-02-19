@@ -33,7 +33,7 @@ const AuthPage: NextPage = () => {
             appearance={{
               theme: ThemeSupa,
               className: {
-                input: "!text-slate-100 focus:ring-teal-500 focus:ring-2",
+                input: "!text-slate-100 focus:ring-teal-500 focus:ring-2 bg-slate-950 rounded",
                 label: "!text-slate-100",
                 message: "bg-cyan-800 p-2 w-full rounded-md text-cyan-100",
               },
