@@ -75,7 +75,7 @@ const Sidebar = () => {
         <div className="flex items-center gap-4">
           <img src="/UserPlaceholder.png" className="h-12 aspect-square p-2 rounded-full" alt="" />
           <div className="">
-            <h2 className="text-slate-200">{email}</h2>
+            <h2 className="text-slate-200 text-sm">{email}</h2>
             <h3 className="font-bold">{position}</h3>
           </div>
         </div>
