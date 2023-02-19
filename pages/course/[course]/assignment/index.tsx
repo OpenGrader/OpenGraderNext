@@ -107,7 +107,7 @@ const Assignments: NextPage<AssignmentListProps> = ({ assignments, course, secti
       <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Assignments - {courseName}</h1>
-          <Link href={"#"} className="">
+          <Link href={`/course/${course.id}/assignment/new`} className="">
             <div className=" w-48 h-12 flex justify-center items-center rounded-lg bg-sky-700 text-3xl">
               <HiPlusCircle />
             </div>

@@ -171,7 +171,7 @@ const CourseListPage: NextPage<CourseListProps> = ({ sections, submissions }) =>
   return (
     <div className="flex">
       <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-full ">
+      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
         <div className="flex justify-between items-center flex-wrap gap-2">
           <h1 className="text-3xl font-bold w-full">Your Courses</h1>
           {sections.map((section) => (
