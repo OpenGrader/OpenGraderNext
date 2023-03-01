@@ -20,6 +20,25 @@ const redirectToLogin = async (
       },
     };
 
+  // only redirect of not on target page
+  if (ctx.resolvedUrl.match(/.*profile\?new=true.*/) == null) {
+    // check for user in the profile table
+    const { data: profile } = await supabase
+      .from("user")
+      .select("euid")
+      .eq("auth_id", session.user.id)
+      .limit(1)
+      .single();
+    if (profile && !profile.euid) {
+      return {
+        redirect: {
+          destination: "/profile?new=true",
+          permanent: false,
+        },
+      };
+    }
+  }
+
   return ssp(ctx);
 };
 

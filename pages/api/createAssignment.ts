@@ -1,5 +1,5 @@
 import { NextApiHandler } from "next";
-import { supabaseAdmin } from "util/supabaseAdmin";
+import { supabaseAdmin } from "util/supabaseClient";
 
 export const handler: NextApiHandler = async (req, res) => {
   const body = req.body;
