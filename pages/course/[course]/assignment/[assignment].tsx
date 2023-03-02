@@ -4,14 +4,14 @@ import Badge, { BadgeVariant } from "Components/Badge";
 import withProtected from "../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../util/misc";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { Student, Assignment } from "types";
+import { User, Assignment } from "types";
 
 type Submission = {
   id: string;
   is_late: boolean;
   score: number | null;
   flags: string[] | null;
-  student: Student;
+  student: User;
 };
 
 type AssignmentT = Assignment & { submission: Submission[] };
