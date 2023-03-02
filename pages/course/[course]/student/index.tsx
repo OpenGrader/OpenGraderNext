@@ -1,16 +1,17 @@
-import { Alerts, AlertType, Student } from "types";
+import { Alerts, AlertType, User } from "types";
 import SubmissionIcon from "Components/SubmissionIcon";
 import { GetServerSidePropsContext, NextPage } from "next";
 import withProtected from "util/withProtected";
-import { queryParamToNumber } from "util/misc";
+import { getCurrentUser, queryParamToNumber } from "util/misc";
 import Sidebar from "Components/Sidebar";
-import { createBrowserSupabaseClient, createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 //warning,all good, late, plagarism
 
 interface StudentsProps {
-  students: Student[];
+  students: User[];
   course: { id: number; department: string; number: string };
+  isInstructor: boolean;
 }
 
 export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
@@ -23,6 +24,25 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
       .select("id, section_number, course ( id, department, number )")
       .filter("id", "eq", courseId);
 
+    const currentUser = await getCurrentUser(supabase);
+    const { data: currentUserMembership } = await supabase
+      .from("membership")
+      .select("role")
+      .eq("section", courseId)
+      .eq("user", currentUser?.id)
+      .single();
+
+    if (!currentUserMembership) {
+      return {
+        redirect: {
+          destination: "/course",
+          permanent: false,
+        },
+      };
+    }
+
+    const isInstructor = currentUserMembership.role === "INSTRUCTOR";
+
     const students = await supabase
       .from("user")
       .select("id, given_name, family_name, euid, section ( id ), membership ( id, role )")
@@ -34,9 +54,9 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
           ?.filter(
             (d) => (d.membership as any[])?.map((m) => m.role).includes("STUDENT") && (d.section as any[]).length > 0,
           ) // hack to only include students
-          .map(
-            (d) =>
-              ({
+          .map((d) => {
+            if (isInstructor)
+              return {
                 ...d,
                 name: d.given_name + " " + d.family_name,
                 submissionCount: Math.floor(Math.random() * 12),
@@ -46,14 +66,29 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
                   missing: Math.floor(Math.random() * 4),
                 },
                 grade: Math.floor(Math.random() * 40 + 60),
-              } as Student),
-          );
+                canCreateClass: false,
+              } as User;
+
+            return {
+              ...d,
+              name: d.given_name + " " + d.family_name,
+              submissionCount: -1,
+              alerts: {
+                errors: -1,
+                plagiarism: -1,
+                missing: -1,
+              },
+              grade: -1,
+              canCreateClass: false,
+            };
+          });
       });
 
     return {
       props: {
         students,
         course,
+        isInstructor,
       },
     };
   });
@@ -76,7 +111,7 @@ const Warnings = ({ Alerts }: { Alerts: Alerts }) => {
   );
 };
 
-const StudentBlock: React.FC<Student> = (student) => {
+const StudentBlock: React.FC<{ student: User; isInstructor: boolean }> = ({ student, isInstructor }) => {
   return (
     <div className="bg-slate-800 w-full p-3 rounded-md">
       <div className="flex justify-between">
@@ -85,15 +120,17 @@ const StudentBlock: React.FC<Student> = (student) => {
             <div className="text-xl flex gap-2 items-center">
               <p className="text-xl font-bold">{student.name}</p>
               <p className="">({student.euid})</p>
-              <Warnings Alerts={student.alerts} />
+              {isInstructor && <Warnings Alerts={student.alerts} />}
             </div>
-            <p>{student.submissionCount} submissions</p>
+            {isInstructor && <p>{student.submissionCount} submissions</p>}
           </div>
-          <h1>Current Grade: {student.grade}%</h1>
+          {isInstructor && <h1>Current Grade: {student.grade}%</h1>}
         </div>
-        <h1 className="text-slate-400">
-          View | Edit | <span className="text-red-900">Delete</span>
-        </h1>
+        {isInstructor && (
+          <h1 className="text-slate-400">
+            View | Edit | <span className="text-red-900">Delete</span>
+          </h1>
+        )}
       </div>
     </div>
   );
@@ -102,7 +139,7 @@ const StudentBlock: React.FC<Student> = (student) => {
   /* <p className="text-slate-300">{SubmissionCount} submissions</p> */
 }
 
-const Students: NextPage<StudentsProps> = ({ students, course }) => {
+const Students: NextPage<StudentsProps> = ({ students, course, isInstructor }) => {
   return (
     <div className="flex">
       <Sidebar />
@@ -112,7 +149,7 @@ const Students: NextPage<StudentsProps> = ({ students, course }) => {
         </h1>
         <div className="flex flex-col gap-6 overflow-auto">
           {students.map((student, index) => {
-            return <StudentBlock {...student} key={index} />;
+            return <StudentBlock student={student} isInstructor={isInstructor} key={index} />;
           })}
         </div>
       </div>

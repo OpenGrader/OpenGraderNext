@@ -2,6 +2,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { getCurrentUser } from "util/misc";
 import UserMenu from "./UserMenu";
 
 const user = {
@@ -56,14 +57,25 @@ const SideBarLinks = () => {
 
 const Sidebar = () => {
   const supabase = useSupabaseClient();
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [isInstructor, setInstructor] = useState(false);
 
   useEffect(() => {
+    getCurrentUser(supabase).then((user) => {
+      setName(user?.given_name + " " + user?.family_name);
+    });
+
     supabase.auth.getUser().then(({ data }) => {
-      setEmail(data.user?.email ?? "unknown user");
+      const userId = data.user?.id;
+      supabase
+        .rpc("is_instructor", { uid: userId })
+        .single()
+        .then(({ data }) => {
+          setInstructor(data);
+        });
     });
   }, []);
-  const position = "Teacher";
+  const position = isInstructor ? "Instructor" : "Student";
 
   return (
     <div className="h-screen fixed w-2/12 flex flex-col text-slate-50 bg-slate-950 justify-between pt-6">
@@ -75,7 +87,7 @@ const Sidebar = () => {
         <div className="flex items-center gap-4">
           <img src="/UserPlaceholder.png" className="h-12 aspect-square p-2 rounded-full" alt="" />
           <div className="">
-            <h2 className="text-slate-200 text-sm">{email}</h2>
+            <h2 className="text-slate-200 text-sm">{name}</h2>
             <h3 className="font-bold">{position}</h3>
           </div>
         </div>

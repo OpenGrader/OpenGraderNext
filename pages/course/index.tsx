@@ -3,21 +3,25 @@ import Sidebar from "Components/Sidebar";
 import { GetServerSidePropsContext, NextPage } from "next";
 import Link from "next/link";
 import { Assignment, Submission } from "types";
+import { getCurrentUser } from "util/misc";
 import withProtected from "util/withProtected";
 
 type CourseSection = {
-  id: number;
-  section_number: string;
-  course: {
-    department: string;
-    number: string;
+  section: {
+    id: number;
+    section_number: string;
+    course: {
+      department: string;
+      number: string;
+    };
+    assignment: Assignment[];
   };
-  assignment: Assignment[];
 };
 
 interface CourseListProps {
   sections: CourseSection[];
   submissions: Record<number, Array<FormattedSubmissionT>>;
+  isInstructor: any;
 }
 
 type FormattedSubmissionT = { formatted: string; created: Date | string };
@@ -26,45 +30,55 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async (ctx) => {
     const supabase = createServerSupabaseClient(ctx);
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const profile = await getCurrentUser(supabase);
+
     const sections = await supabase
-      .from("section")
+      .from("membership")
       .select(
-        `id,
-      course (
-        department,
-        number
-      ),
-      assignment (
-        id,
-        title,
-        created_at,
-        is_open,
-        is_late,
-        section,
-        submission (
+        `section (
           id,
-          created_at,
-          student (
+          section_number,
+          course (
+            department,
+            number
+          ),
+          assignment (
             id,
-            given_name,
-            family_name,
-            euid
+            title,
+            created_at,
+            is_open,
+            is_late,
+            section,
+            submission (
+              id,
+              created_at,
+              student (
+                id,
+                given_name,
+                family_name,
+                euid
+              )
+            )
           )
-        )
-      ),
-      section_number`,
+        )`,
       )
-      .order("created_at", { foreignTable: "assignment", ascending: false })
-      .order("created_at", { foreignTable: "assignment.submission", ascending: false });
+      .eq("user", profile?.id)
+      .order("created_at", { foreignTable: "section.assignment", ascending: false })
+      .order("created_at", { foreignTable: "section.assignment.submission", ascending: false });
+    console.error(sections.error);
 
     // chronologically-ordered list of submissions keyed by submission id
     const allSubmissions = sections.data
-      ?.map((section) => section.assignment)
+      ?.map((section) => (section as unknown as CourseSection).section.assignment)
       .flat()
       .reduce<Record<number, Array<FormattedSubmissionT>>>((prev, assignment) => {
         if (assignment) {
           const submissions = assignment.submission as Array<Partial<Submission>>;
-          const sectionId = assignment.section as number;
+          const sectionId = assignment.section;
           if (!prev[sectionId]) {
             prev[sectionId] = [];
           }
@@ -98,11 +112,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
         }
         return prev;
       }, {});
+    const { data: isInstructor } = await supabase.rpc("is_instructor", { uid: user?.id });
 
     return {
       props: {
         sections: sections.data,
         submissions: allSubmissions,
+        isInstructor,
       },
     };
   });
@@ -121,7 +137,7 @@ const makeInfoString = (assignment: Assignment): string => {
   return `(${ret.join(", ")})`;
 };
 
-const SectionCard: React.FC<CourseSection & { submissions: Array<FormattedSubmissionT> }> = ({
+const SectionCard: React.FC<CourseSection["section"] & { submissions: Array<FormattedSubmissionT> }> = ({
   id,
   section_number,
   course,
@@ -174,7 +190,7 @@ const CourseListPage: NextPage<CourseListProps> = ({ sections, submissions }) =>
       <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
         <div className="flex justify-between items-center flex-wrap gap-2">
           <h1 className="text-3xl font-bold w-full">Your Courses</h1>
-          {sections.map((section) => (
+          {sections?.map(({ section }) => (
             <SectionCard {...section} submissions={submissions[section.id] ?? []} />
           ))}
         </div>

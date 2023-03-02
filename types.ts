@@ -9,7 +9,7 @@ export type pageData = {
   courseID: string;
 };
 
-export type Student = {
+export type User = {
   name: string;
   id: string;
   given_name: string;
@@ -18,6 +18,7 @@ export type Student = {
   grade: number;
   submissionCount: number;
   alerts: Alerts;
+  canCreateClass: boolean;
 };
 
 export type assignment = {
@@ -63,7 +64,7 @@ export type Assignment = {
   description: string;
   is_open: boolean;
   is_late: boolean;
-  section: Section;
+  section: number;
   submissionCount: number;
   warnings: number;
   submission: Submission[];
@@ -73,7 +74,7 @@ export type Submission = {
   id: number;
   created_at: Date;
   assignment: number;
-  student: number | Student | null;
+  student: number | User | null;
   is_late: boolean;
   score: number;
   flags: string[] | null;
