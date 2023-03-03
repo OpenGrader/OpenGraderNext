@@ -3,22 +3,22 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "util/misc";
+import { HiOutlineAcademicCap, HiOutlineChartBar, HiOutlineClipboard, HiOutlineUsers } from "react-icons/hi";
 import UserMenu from "./UserMenu";
+import OpenGraderLogo from "./OpenGraderLogo";
 
-const user = {
-  name: "John D.",
-  position: "Teacher",
-};
+const classNames = (...classes: string[]): string => classes.filter(Boolean).join(" ");
 
 const SideBarLinks = () => {
+  const router = useRouter();
+
   const routes = [
-    { text: "Courses", link: "" },
-    { text: "Assignments", link: ":course/assignment" },
-    { text: "Students", link: ":course/student" },
-    { text: "Reports", link: ":course/report" },
+    { text: "Courses", link: "", icon: HiOutlineAcademicCap },
+    { text: "Assignments", link: ":course/assignment", icon: HiOutlineClipboard },
+    { text: "Students", link: ":course/student", icon: HiOutlineUsers },
+    { text: "Reports", link: ":course/report", icon: HiOutlineChartBar },
   ];
 
-  const router = useRouter();
   const splitPath = router.asPath.split("/");
   let courseId = "-1";
   if (splitPath.length >= 3) {
@@ -28,30 +28,31 @@ const SideBarLinks = () => {
   }
 
   return (
-    <>
-      {routes.map((option, index) => {
-        const link = "/course/" + option.link.replace(":course", courseId);
-        // replaceAll is a hack
-        if (router.asPath.toString().replaceAll("/", "") === link.replaceAll("/", ""))
-          return (
-            <Link
-              href={link}
-              key={index}
-              className="bg-slate-700 font-semibold w-full rounded-lg text-left px-4 py-2 flex items-center transition-all">
-              {option.text}
-            </Link>
-          );
-        else
-          return (
-            <Link
-              href={link}
-              key={index}
-              className="w-full rounded-lg text-left px-4 py-2 flex items-center hover:bg-slate-800 focus:bg-slate-700 focus:text-slate-50 focus:animate-pulse transition-all text-slate-200">
-              {option.text}
-            </Link>
-          );
+    <nav className="mt-5 flex-1 space-y-1 bg-gray-800 px-2" aria-label="Sidebar">
+      {routes.map((item) => {
+        const link = "/course/" + item.link.replace(":course", courseId);
+        const isCurrent = router.asPath.toString().replaceAll("/", "") === link.replaceAll("/", "");
+
+        return (
+          <Link
+            key={item.text}
+            href={link}
+            className={classNames(
+              isCurrent ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white",
+              "group flex items-center rounded-md px-2 py-2 text-sm font-medium",
+            )}>
+            <item.icon
+              className={classNames(
+                isCurrent ? "text-gray-300" : "text-gray-400 group-hover:text-gray-300",
+                "mr-3 h-6 w-6 flex-shrink-0",
+              )}
+              aria-hidden="true"
+            />
+            <span className="flex-1">{item.text}</span>
+          </Link>
+        );
       })}
-    </>
+    </nav>
   );
 };
 
@@ -78,20 +79,15 @@ const Sidebar = () => {
   const position = isInstructor ? "Instructor" : "Student";
 
   return (
-    <div className="h-screen fixed w-2/12 flex flex-col text-slate-50 bg-slate-950 justify-between pt-6">
-      <div className="px-3 flex flex-col gap-3">
-        <h1 className="text-center text-3xl font-bold mb-6">OpenGrader</h1>
+    <div className="sticky relative top-0 h-screen flex-1 flex-col bg-gray-800">
+      <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
+        <div className="flex flex-shrink-0 items-center px-4 -mt-4">
+          <OpenGraderLogo />
+        </div>
         <SideBarLinks />
       </div>
-      <div className="w-full h-20 px-4 flex items-center justify-between bg-slate-800">
-        <div className="flex items-center gap-4">
-          <img src="/UserPlaceholder.png" className="h-12 aspect-square p-2 rounded-full" alt="" />
-          <div className="">
-            <h2 className="text-slate-200 text-sm">{name}</h2>
-            <h3 className="font-bold">{position}</h3>
-          </div>
-        </div>
-        <UserMenu />
+      <div className="absolute bottom-0 w-full flex flex-shrink-0 bg-gray-700 p-4">
+        <UserMenu name={name} position={position} />
       </div>
     </div>
   );
