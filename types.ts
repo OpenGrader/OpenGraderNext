@@ -11,7 +11,7 @@ export type pageData = {
 
 export type User = {
   name: string;
-  id: string;
+  id: number;
   given_name: string;
   family_name: string;
   euid: string;
@@ -19,6 +19,7 @@ export type User = {
   submissionCount: number;
   alerts: Alerts;
   canCreateClass: boolean;
+  auth_id: string;
 };
 
 export type assignment = {

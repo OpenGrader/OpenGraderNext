@@ -36,5 +36,6 @@ export const getCurrentUser = async (client: SupabaseClient): Promise<User | nul
     grade: 0,
     submissionCount: 0,
     alerts: { missing: 0, plagiarism: 0, errors: 0 },
+    auth_id: profile.auth_id,
   };
 };

@@ -150,7 +150,8 @@ const SectionCard: React.FC<CourseSection["section"] & { submissions: Array<Form
         {course.department} {course.number}.{section_number}{" "}
         <Link
           href={`/course/${id}/assignment`}
-          className="inline-flex items-center rounded border border-transparent bg-cyan-700 px-2.5 py-1 text-xs font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
+          className="inline-flex items-center rounded border border-transparent bg-cyan-700 px-2.5 py-1 text-xs font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
+        >
           View course
         </Link>
       </div>

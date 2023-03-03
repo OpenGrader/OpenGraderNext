@@ -6,6 +6,9 @@ import { getCurrentUser } from "util/misc";
 import { HiOutlineAcademicCap, HiOutlineChartBar, HiOutlineClipboard, HiOutlineUsers } from "react-icons/hi";
 import UserMenu from "./UserMenu";
 import OpenGraderLogo from "./OpenGraderLogo";
+import { useAppDispatch, useAppSelector } from "hooks";
+import { loadUser, setRole } from "store/userSlice";
+
 
 const classNames = (...classes: string[]): string => classes.filter(Boolean).join(" ");
 
@@ -58,12 +61,12 @@ const SideBarLinks = () => {
 
 const Sidebar = () => {
   const supabase = useSupabaseClient();
-  const [name, setName] = useState("");
-  const [isInstructor, setInstructor] = useState(false);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((store) => store.user);
 
   useEffect(() => {
     getCurrentUser(supabase).then((user) => {
-      setName(user?.given_name + " " + user?.family_name);
+      if (user) dispatch(loadUser(user));
     });
 
     supabase.auth.getUser().then(({ data }) => {
@@ -71,12 +74,11 @@ const Sidebar = () => {
       supabase
         .rpc("is_instructor", { uid: userId })
         .single()
-        .then(({ data }) => {
-          setInstructor(data);
+        .then(({ data: isInstructor }) => {
+          dispatch(setRole(isInstructor ? "INSTRUCTOR" : "STUDENT"));
         });
     });
   }, []);
-  const position = isInstructor ? "Instructor" : "Student";
 
   return (
     <div className="sticky relative top-0 h-screen flex-1 flex-col bg-gray-800">
@@ -87,7 +89,7 @@ const Sidebar = () => {
         <SideBarLinks />
       </div>
       <div className="absolute bottom-0 w-full flex flex-shrink-0 bg-gray-700 p-4">
-        <UserMenu name={name} position={position} />
+        <UserMenu name={user.name ?? "Loading..."} position={user.role ?? "Loading..."} />
       </div>
     </div>
   );

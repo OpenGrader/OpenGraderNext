@@ -4,6 +4,8 @@ import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 import Head from "next/head";
+import { Provider } from "react-redux";
+import { store } from "store";
 
 function MyApp({ Component, pageProps }: AppProps<{ initialSession: Session }>) {
   const [supabase] = useState(() => createBrowserSupabaseClient());
@@ -14,7 +16,9 @@ function MyApp({ Component, pageProps }: AppProps<{ initialSession: Session }>) 
         <Head>
           <title>OpenGrader</title>
         </Head>
-        <Component {...pageProps} />
+        <Provider store={store}>
+          <Component {...pageProps} />
+        </Provider>
       </SessionContextProvider>
     </>
   );

@@ -62,7 +62,8 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ sectionId }) => {
               <select
                 id="language"
                 name="language"
-                className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              >
                 <option>C/C++</option>
                 <option>Python</option>
                 <option>JavaScript</option>
@@ -83,7 +84,8 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ sectionId }) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  className="w-12 h-12 mx-auto text-gray-600">
+                  className="w-12 h-12 mx-auto text-gray-600"
+                >
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -94,7 +96,8 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ sectionId }) => {
                 <div className="flex text-sm text-gray-400">
                   <label
                     htmlFor="input-def"
-                    className="relative cursor-pointer rounded-md font-medium text-blue-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-400 focus-within:ring-offset-2 ring-offset-slate-900 hover:text-blue-400 focus:outline-none">
+                    className="relative cursor-pointer rounded-md font-medium text-blue-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-400 focus-within:ring-offset-2 ring-offset-slate-900 hover:text-blue-400 focus:outline-none"
+                  >
                     <span>Upload a file</span>
                     <input id="input-def" name="input-def" type="file" className="sr-only" />
                   </label>
@@ -117,7 +120,8 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ sectionId }) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  className="w-12 h-12 mx-auto text-gray-600">
+                  className="w-12 h-12 mx-auto text-gray-600"
+                >
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -128,7 +132,8 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ sectionId }) => {
                 <div className="flex text-sm text-gray-400">
                   <label
                     htmlFor="output-def"
-                    className="relative cursor-pointer rounded-md font-medium text-blue-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-400 focus-within:ring-offset-2 ring-offset-slate-900 hover:text-blue-400 focus:outline-none">
+                    className="relative cursor-pointer rounded-md font-medium text-blue-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-400 focus-within:ring-offset-2 ring-offset-slate-900 hover:text-blue-400 focus:outline-none"
+                  >
                     <span>Upload a file</span>
                     <input id="output-def" name="output-def" type="file" className="sr-only" />
                   </label>
@@ -141,7 +146,8 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ sectionId }) => {
           <input type="hidden" value={sectionId} name="section" id="section" />
           <button
             type="submit"
-            className="text-center items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium leading-4 ring-offset-slate-900 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            className="text-center items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium leading-4 ring-offset-slate-900 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
             Create
           </button>
         </form>

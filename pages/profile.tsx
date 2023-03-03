@@ -1,5 +1,4 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Sidebar from "Components/Sidebar";
 import { GetServerSideProps, NextPage } from "next";
 import withProtected from "util/withProtected";
