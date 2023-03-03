@@ -67,6 +67,7 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
                 },
                 grade: Math.floor(Math.random() * 40 + 60),
                 canCreateClass: false,
+                auth_id: "",
               } as User;
 
             return {
