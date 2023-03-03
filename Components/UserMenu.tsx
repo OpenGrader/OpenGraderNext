@@ -37,13 +37,15 @@ const UserMenu: React.FC<UserMenuProps> = ({ name, position }) => {
         enterTo="transform opacity-100 scale-100"
         leave="transition ease-in duration-75"
         leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95">
+        leaveTo="transform opacity-0 scale-95"
+      >
         <Menu.Items className="absolute left-0 bottom-0 mb-10 z-10 mt-2 w-48 origin-bottom-right rounded-md bg-black py-1 shadow-lg ring-1 ring-white ring-opacity-5 focus:outline-none">
           <Menu.Item>
             {({ active }) => (
               <a
                 href="/profile"
-                className={classNames(active ? "bg-gray-900" : "", "block px-4 py-2 text-sm text-gray-300")}>
+                className={classNames(active ? "bg-gray-900" : "", "block px-4 py-2 text-sm text-gray-300")}
+              >
                 Your Profile
               </a>
             )}
@@ -62,7 +64,8 @@ const UserMenu: React.FC<UserMenuProps> = ({ name, position }) => {
                 className={classNames(
                   active ? "bg-gray-900" : "",
                   "block px-4 py-2 text-sm text-gray-300 w-full text-left",
-                )}>
+                )}
+              >
                 Sign out
               </button>
             )}
