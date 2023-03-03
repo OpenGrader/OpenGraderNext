@@ -1,14 +1,12 @@
 import { NextPage } from "next";
-import AssignmentUpload from "../../Components/AssignmentUpload"
+import AssignmentUpload from "../../Components/AssignmentUpload";
 
 const Upload: NextPage = () => {
-
-    return(
-        <>
-        <AssignmentUpload/>
-        </>
-    )
+  return (
+    <>
+      <AssignmentUpload />
+    </>
+  );
 };
-
 
 export default Upload;

@@ -9,19 +9,22 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.4",
+    "@reduxjs/toolkit": "^1.9.3",
     "@supabase/auth-helpers-nextjs": "^0.5.2",
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/auth-ui-react": "^0.2.6",
     "@supabase/supabase-js": "^2.1.1",
     "@tailwindcss/forms": "^0.5.3",
     "@tippyjs/react": "^4.2.6",
+    "@types/react-redux": "^7.1.25",
     "eslint": "^8.26.0",
     "eslint-config-next": "^13.0.2",
     "next": "^13.0.2",
     "prettier": "^2.7.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-icons": "^4.6.0"
+    "react-icons": "^4.6.0",
+    "react-redux": "^8.0.5"
   },
   "devDependencies": {
     "@types/node": "18.11.3",
