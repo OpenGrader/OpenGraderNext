@@ -1,13 +1,11 @@
 import { NextPage } from "next";
-import { HiOutlineBookOpen } from "react-icons/hi";
 import { useEffect, useState } from "react";
 import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
+import { OpenGraderLogo } from "Components/OpenGraderLogo";
 
 const AuthPage: NextPage = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const supabase = useSupabaseClient();
   const session = useSession();
   const router = useRouter();
@@ -21,12 +19,7 @@ const AuthPage: NextPage = () => {
   return (
     <div className="h-screen flex justify-center items-center container mx-auto text-slate-100">
       <div className="w-full h-screen md:h-auto flex content-center flex-wrap md:w-auto md:min-w-[300px] md:border border-gray-500 text-gray-300 shadow-md py-2 px-8 rounded-md bg-gray-900">
-        <h1 className="text-2xl mt-4 flex items-center gap-2 font-light w-full">
-          <div className="rounded-full bg-teal-900 w-8 h-8 flex items-center justify-center">
-            <HiOutlineBookOpen className="h-5 w-5 text-teal-300" />
-          </div>
-          OpenGrader
-        </h1>
+        <OpenGraderLogo />
         <div className="w-full">
           <Auth
             supabaseClient={supabase}
