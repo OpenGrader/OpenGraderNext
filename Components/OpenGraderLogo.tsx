@@ -10,3 +10,5 @@ export const OpenGraderLogo = () => {
     </h1>
   );
 };
+
+export default OpenGraderLogo;

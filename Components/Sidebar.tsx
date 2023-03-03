@@ -1,16 +1,11 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "util/misc";
 import { HiOutlineAcademicCap, HiOutlineChartBar, HiOutlineClipboard, HiOutlineUsers } from "react-icons/hi";
 import UserMenu from "./UserMenu";
-import Link from "next/link";
-import { OpenGraderLogo } from "./OpenGraderLogo";
-
-const user = {
-  name: "John D.",
-  position: "Teacher",
-};
+import OpenGraderLogo from "./OpenGraderLogo";
 
 const classNames = (...classes: string[]): string => classes.filter(Boolean).join(" ");
 
@@ -45,8 +40,7 @@ const SideBarLinks = () => {
             className={classNames(
               isCurrent ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white",
               "group flex items-center rounded-md px-2 py-2 text-sm font-medium",
-            )}
-          >
+            )}>
             <item.icon
               className={classNames(
                 isCurrent ? "text-gray-300" : "text-gray-400 group-hover:text-gray-300",

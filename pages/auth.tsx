@@ -1,9 +1,9 @@
 import { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
-import { OpenGraderLogo } from "Components/OpenGraderLogo";
+import OpenGraderLogo from "Components/OpenGraderLogo";
 
 const AuthPage: NextPage = () => {
   const supabase = useSupabaseClient();
@@ -45,36 +45,6 @@ const AuthPage: NextPage = () => {
       </div>
     </div>
   );
-
-  // return (
-  //   <div className="h-screen flex justify-center items-center">
-  //     <div className="flex flex-col container mx-auto items-center gap-3 text-slate-50">
-  //       <HiOutlineBookOpen className="w-36 h-36 aspect-square stroke-slate-50" />
-  //       <h1 className="text-4xl font-bold">Register for OpenGrader</h1>
-  //       <form action="/register" className="flex flex-col gap-3 mx-auto">
-  //         <input
-  //           type="text"
-  //           className="rounded-lg bg-gray-800 text-center h-10 w-80"
-  //           placeholder="Username"
-  //           required
-  //           minLength={3}
-  //           maxLength={32}
-  //           onChange={(e) => setUsername(e.target.value)}
-  //         />
-
-  //         <input
-  //           type="password"
-  //           className="rounded-lg bg-gray-800 text-center h-10 w-80"
-  //           placeholder="Password"
-  //           required
-  //           min-minLength={12}
-  //           onChange={(e) => setPassword(e.target.value)}
-  //         />
-  //         <button className="w-full h-10 bg-green-800 text-center rounded-lg">Register</button>
-  //       </form>
-  //     </div>
-  //   </div>
-  // );
 };
 
 export default AuthPage;
