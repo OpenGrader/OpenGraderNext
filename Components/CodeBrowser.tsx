@@ -1,4 +1,6 @@
 import Prism from 'prismjs' //used for syntax highlighting
+import 'prismjs/components'    //supports syntax highlighting for all languages
+import 'prismjs/themes/prism-okaidia.css'   //stylizes syntax highlighting
 
 interface CodeBrowserProps {
     language: string;
