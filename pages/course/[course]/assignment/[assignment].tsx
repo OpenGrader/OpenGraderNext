@@ -1,10 +1,12 @@
 import { GetServerSidePropsContext, NextPage } from "next";
+import { useState } from 'react'
 import Sidebar from "../../../../Components/Sidebar";
 import Badge, { BadgeVariant } from "Components/Badge";
 import withProtected from "../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../util/misc";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { User, Assignment } from "types";
+import CodeBrowser from "Components/CodeBrowser";
 
 type Submission = {
   id: string;
@@ -76,8 +78,13 @@ const flagClass = (flag: string): BadgeVariant => {
       return "cyan";
   }
 };
+var samplePythonCode = 'x = str(100)'
 
 const SubmissionCard: React.FC<Submission> = (submission) => {
+  const [isSubmissionCardClicked, setIsSubmissionCardClicked] = useState(false)
+  const handleSubmissionCardClick = () => {
+    setIsSubmissionCardClicked(true);
+  };
   let studentDesc: string;
   if (submission.student.given_name || submission.student.family_name) {
     studentDesc = `${submission.student.given_name} ${submission.student.family_name}`;
@@ -86,23 +93,26 @@ const SubmissionCard: React.FC<Submission> = (submission) => {
   }
 
   return (
-    <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-slate-800 shadow w-full">
-      <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-2">
-        {studentDesc} {submission.is_late && <Badge variant="red">Late</Badge>}
-      </div>
-      <div className="px-4 py-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-2">
-        <div>
-          <div className="font-bold">Score</div>
-          <div className="my-1">{submission.score ? submission.score : "Ungraded"}</div>
+    <div onClick={handleSubmissionCardClick}>
+      <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-slate-800 shadow w-full">
+        <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-2">
+          {studentDesc} {submission.is_late && <Badge variant="red">Late</Badge>}
         </div>
-        <div>
-          <div className="font-bold">Flags</div>
-          <div className="flex gap-2 flex-wrap my-1">
-            {submission.flags && submission.flags.length > 0
-              ? submission.flags.map((flag) => <Badge variant={flagClass(flag)}>{flag}</Badge>)
-              : "No flags"}
+        <div className="px-4 py-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div>
+            <div className="font-bold">Score</div>
+            <div className="my-1">{submission.score ? submission.score : "Ungraded"}</div>
+          </div>
+          <div>
+            <div className="font-bold">Flags</div>
+            <div className="flex gap-2 flex-wrap my-1">
+              {submission.flags && submission.flags.length > 0
+                ? submission.flags.map((flag) => <Badge variant={flagClass(flag)}>{flag}</Badge>)
+                : "No flags"}
+            </div>
           </div>
         </div>
+        {isSubmissionCardClicked && <CodeBrowser language="python" code={samplePythonCode} />}
       </div>
     </div>
   );
