@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext, NextPage } from "next";
-import { useState } from 'react'
+import { useState } from "react";
 import Sidebar from "../../../../Components/Sidebar";
 import Badge, { BadgeVariant } from "Components/Badge";
 import withProtected from "../../../../util/withProtected";
@@ -78,10 +78,10 @@ const flagClass = (flag: string): BadgeVariant => {
       return "cyan";
   }
 };
-var samplePythonCode = 'x = str(100)'
+var samplePythonCode = "x = str(100)";
 
 const SubmissionCard: React.FC<Submission> = (submission) => {
-  const [isSubmissionCardClicked, setIsSubmissionCardClicked] = useState(false)
+  const [isSubmissionCardClicked, setIsSubmissionCardClicked] = useState(false);
   const handleSubmissionCardClick = () => {
     setIsSubmissionCardClicked(true);
   };
