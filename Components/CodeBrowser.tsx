@@ -1,5 +1,5 @@
 import Prism from "prismjs"; //used for syntax highlighting
-import "prismjs/components/index"; //supports syntax highlighting for all languages
+import "prismjs/components/prism-python"; //supports syntax highlighting for all languages
 import "prismjs/themes/prism-okaidia.css"; //stylizes syntax highlighting
 
 interface CodeBrowserProps {
