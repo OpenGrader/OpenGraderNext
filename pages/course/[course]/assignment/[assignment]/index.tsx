@@ -5,6 +5,7 @@ import withProtected from "../../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../../util/misc";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { User, Assignment } from "types";
+import Link from "next/link";
 
 type Submission = {
   id: string;
@@ -108,28 +109,38 @@ const SubmissionCard: React.FC<Submission> = (submission) => {
   );
 };
 
-const AssignmentView: NextPage<AssignmentProps> = ({ assignment }) => {
+const AssignmentView: NextPage<AssignmentProps> = ({ assignment,courseId }) => {
   return (
     <div className="flex">
       <Sidebar />
       <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
-        <h1 className="font-bold text-3xl text-slate-50 flex flex-wrap items-center gap-4">
-          Assignment: {assignment.title}{" "}
-          {assignment.is_open ? (
-            <>
-              <Badge variant="green">Open</Badge>
-              {assignment.is_late ? (
-                <Badge variant="orange">New submissions are late</Badge>
+        <div className="flex justify-between items-center">
+          <div className="">
+            <h1 className="font-bold text-3xl text-slate-50 flex flex-wrap items-center gap-4">
+              Assignment: {assignment.title}{" "}
+              {assignment.is_open ? (
+                <>
+                  <Badge variant="green">Open</Badge>
+                  {assignment.is_late ? (
+                    <Badge variant="orange">New submissions are late</Badge>
+                  ) : (
+                    <Badge variant="cyan">Ready for submissions</Badge>
+                  )}
+                </>
               ) : (
-                <Badge variant="cyan">Ready for submissions</Badge>
-              )}
-            </>
-          ) : (
-            <Badge variant="red">Locked</Badge>
-          )}{" "}
-        </h1>
-        <p>{assignment.description}</p>
-        <h2 className="font-semibold text-2xl text-slate-50">Submissions</h2>
+                <Badge variant="red">Locked</Badge>
+              )}{" "}
+            </h1>
+            <p>{assignment.description}</p>
+            <h2 className="font-semibold text-2xl text-slate-50">Submissions</h2>
+          </div>
+
+          <Link href={`/course/${courseId}/assignment/${assignment.id}/submit`} className="">
+            <div className=" w-48 h-12 flex justify-center items-center rounded-lg bg-sky-700 text-3xl">
+              <h1>Submit</h1>
+            </div>
+          </Link>
+        </div>
         {assignment.submission.map(SubmissionCard)}
       </div>
     </div>
