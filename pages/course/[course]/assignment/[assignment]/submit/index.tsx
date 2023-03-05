@@ -1,11 +1,13 @@
 import withProtected from "../../../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../../../util/misc";
 import { GetServerSidePropsContext, NextPage } from "next";
-import Badge,{BadgeVariant} from "Components/Badge";
+import Badge, { BadgeVariant } from "Components/Badge";
 import Sidebar from "Components/Sidebar";
 import { User, Assignment } from "types";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import Upload from "../../../../../../Components/UploadBox"
+import Upload from "../../../../../../Components/UploadBox";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useState } from "react";
 
 type Submission = {
   id: string;
@@ -65,20 +67,12 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
     };
   });
 
-const flagClass = (flag: string): BadgeVariant => {
-  switch (flag) {
-    case "ERROR":
-      return "red";
-    case "PLAGIARISM":
-      return "orange";
-    case "MISSING":
-      return "pink";
-    default:
-      return "cyan";
-  }
-};
-
 const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment }) => {
+  const supabase = useSupabaseClient();
+  const [userId, setUserId] = useState<string | undefined>(undefined);
+  supabase.auth.getUser().then(({ data }) => {
+    setUserId(data.user?.id);
+  });
   return (
     <div className="flex">
       <Sidebar />
@@ -100,7 +94,7 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
         </h1>
         <p>{assignment.description}</p>
         <div className="">
-          <Upload bucket="assignments" path={`${courseId}/${id}/`} url={`course/${courseId}/assignment/${id}/`} />
+          <Upload bucket="assignments" courseID={courseId} assignmentID={id} userID={userId} />
         </div>
       </div>
     </div>

@@ -4,27 +4,46 @@ import { Router, useRouter } from "next/router";
 import { nanoid } from "nanoid";
 import { MouseEvent } from "react";
 
-const Upload = ({ bucket, path, url}: { bucket: string; path: string,url: string }) => {
+const Upload = ({
+  bucket,
+  courseID,
+  assignmentID,
+  userID,
+}: {
+  bucket: string;
+  courseID: number;
+  assignmentID: number;
+  userID: string | undefined;
+}) => {
   const routers = useRouter();
   const [file, setFile] = useState<File>();
   const [fileName, setFileName] = useState<string | undefined>("");
   const supabase = useSupabaseClient();
 
   async function fileUpload(file?: File) {
-    // if (file) {
-    //   console.log("HAS FILE");
-    // }
-    path.concat(nanoid());
-
-    const { data, error } = await supabase.storage.from("assignments").upload(path, file || "");
+    const fileID = nanoid();
+    let path = `${courseID}/${assignmentID}/${userID}/${fileID}`;
+    const { data, error } = await supabase.storage.from(bucket).upload(path, file || "");
+    createRecord(fileID);
   }
+
+  const createRecord = async (nanoID: string) => {
+    const { data, error } = await supabase.from("student_Submission").insert([
+      {
+        course_ID: courseID,
+        assignment_ID: assignmentID,
+        user_ID: userID,
+        file_Name: fileName,
+        nanoID: nanoID,
+      },
+    ]);
+  };
 
   const handleClick = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
     fileUpload(file);
     routers.push("/course");
   };
-
 
   useEffect(() => {
     setFileName(file?.name);
