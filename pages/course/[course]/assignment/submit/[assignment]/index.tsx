@@ -1,8 +1,8 @@
 import { GetServerSidePropsContext, NextPage } from "next";
-import Sidebar from "../../../../../../../Components/Sidebar";
-import Badge, { BadgeVariant } from "Components/Badge";
-import withProtected from "../../../../../../../util/withProtected";
-import { queryParamToNumber } from "../../../../../../../util/misc";
+import Sidebar from "../../../../../../Components/Sidebar";
+import Badge, { BadgeVariant } from "../../../../../../Components/Badge";
+import withProtected from "../../../../../../util/withProtected";
+import { queryParamToNumber } from "../../../../../../util/misc";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { User, Assignment } from "types";
 
