@@ -75,7 +75,7 @@ const Upload = ({
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                     <span className="font-semibold">Click to upload</span> or drag and drop
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">ZIP, RAR, 7ZIP (MAX. 50mb)</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">.zip (max. 50MB)</p>
                 </>
               ) : (
                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
@@ -87,7 +87,7 @@ const Upload = ({
               id="dropzone-file"
               type="file"
               className="hidden"
-              accept=".zip, .rar, .7zip"
+              accept=".zip"
               onChange={(e) => setFile(e.target.files?.[0])}
             />
           </label>
