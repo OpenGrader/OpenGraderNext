@@ -39,3 +39,12 @@ export const getCurrentUser = async (client: SupabaseClient): Promise<User | nul
     auth_id: profile.auth_id,
   };
 };
+
+export async function getAssignmentFile(client: SupabaseClient, bucketName: string, fileName: string, assignmentId: number){
+  const { data, error } = await client.storage.from(bucketName).download(`${assignmentId}/${fileName}`);
+  if (error) {
+    console.error('Error downloading file:', error);
+    return null;
+  }
+  return data;
+}
