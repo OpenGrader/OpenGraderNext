@@ -1,19 +1,30 @@
 import { useState, useEffect } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Router, useRouter } from "next/router";
+import { nanoid } from "nanoid";
+import { MouseEvent } from "react";
 
-const Upload = ({bucket,path}:{bucket: string, path:string}) => {
+const Upload = ({ bucket, path, url}: { bucket: string; path: string,url: string }) => {
+  const routers = useRouter();
   const [file, setFile] = useState<File>();
   const [fileName, setFileName] = useState<string | undefined>("");
   const supabase = useSupabaseClient();
 
   async function fileUpload(file?: File) {
-    if (file) {
-      console.log("HAS FILE");
-    }
-    // const path = `Sample/${file?.name}`;
+    // if (file) {
+    //   console.log("HAS FILE");
+    // }
+    path.concat(nanoid());
 
     const { data, error } = await supabase.storage.from("assignments").upload(path, file || "");
   }
+
+  const handleClick = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    e.preventDefault();
+    fileUpload(file);
+    routers.push("/course");
+  };
+
 
   useEffect(() => {
     setFileName(file?.name);
@@ -21,7 +32,7 @@ const Upload = ({bucket,path}:{bucket: string, path:string}) => {
 
   return (
     <>
-      <form className="w-full flex flex-col items-center gap-2 p-2">
+      <form className="w-full flex flex-col items-end gap-2 p-2">
         <div className="flex items-center justify-center w-full">
           <label
             htmlFor="dropzone-file"
@@ -62,6 +73,16 @@ const Upload = ({bucket,path}:{bucket: string, path:string}) => {
             />
           </label>
         </div>
+        {file && (
+          <div className="">
+            <button
+              type="button"
+              className="bg-transparent hover:bg-slate-500 text-slate-300 font-semibold hover:text-white py-2 px-4 border border-slate-200 hover:border-transparent rounded"
+              onClick={(e) => handleClick(e)}>
+              Submit
+            </button>
+          </div>
+        )}
       </form>
     </>
   );
