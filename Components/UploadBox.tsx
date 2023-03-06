@@ -98,7 +98,7 @@ const Upload = ({
           <div className="">
             <button
               type="button"
-              className="inline-flex items-center rounded border border-transparent bg-cyan-700 px-4 py-2 text-3xl font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
+              className="inline-flex items-center rounded border border-transparent bg-cyan-700 px-4 py-2 text-2xl font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
               onClick={(e) => handleClick(e)}>
               Submit
             </button>
