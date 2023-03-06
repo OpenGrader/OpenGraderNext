@@ -20,7 +20,8 @@ const Upload = ({
   const [fileName, setFileName] = useState<string | undefined>("");
   const supabase = useSupabaseClient();
 
-  async function fileUpload(file?: File) {
+  
+  const fileUpload = async (file?: File) => {
     const fileID = nanoid();
     let path = `${courseID}/${assignmentID}/${userID}/${fileID}`;
     const { data, error } = await supabase.storage.from(bucket).upload(path, file || "");
