@@ -71,14 +71,17 @@ export type Assignment = {
   submission: Submission[];
 };
 
-export type Submission = {
-  id: number;
+export type StudentSubmission = {
+  id: string;
+  is_late: boolean;
+  score: number | null;
+  flags: string[] | null;
+  student: User;
+};
+
+export type Submission = StudentSubmission & {
   created_at: Date;
   assignment: number;
-  student: number | User | null;
-  is_late: boolean;
-  score: number;
-  flags: string[] | null;
   submission_loc: string | null;
   feedback: string | null;
 };

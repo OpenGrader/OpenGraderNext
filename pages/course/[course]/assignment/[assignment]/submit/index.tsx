@@ -3,21 +3,13 @@ import { queryParamToNumber } from "../../../../../../util/misc";
 import { GetServerSidePropsContext, NextPage } from "next";
 import Badge, { BadgeVariant } from "Components/Badge";
 import Sidebar from "Components/Sidebar";
-import { User, Assignment } from "types";
+import { User, Assignment, StudentSubmission } from "types";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import Upload from "../../../../../../Components/UploadBox";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 
-type Submission = {
-  id: string;
-  is_late: boolean;
-  score: number | null;
-  flags: string[] | null;
-  student: User;
-};
-
-type AssignmentT = Assignment & { submission: Submission[] };
+type AssignmentT = Assignment & { submission: StudentSubmission[] };
 
 interface AssignmentProps {
   id: number;
