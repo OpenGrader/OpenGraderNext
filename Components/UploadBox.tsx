@@ -4,6 +4,7 @@ import { Router, useRouter } from "next/router";
 import { nanoid } from "nanoid";
 import { MouseEvent } from "react";
 
+
 const Upload = ({
   bucket,
   courseID,
@@ -74,7 +75,7 @@ const Upload = ({
               {!fileName ? (
                 <>
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
+                    <span className="font-semibold">Click to upload</span>
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">.zip (max. 50MB)</p>
                 </>
@@ -97,7 +98,7 @@ const Upload = ({
           <div className="">
             <button
               type="button"
-              className="bg-transparent hover:bg-slate-500 text-slate-300 font-semibold hover:text-white py-2 px-4 border border-slate-200 hover:border-transparent rounded"
+              className="inline-flex items-center rounded border border-transparent bg-cyan-700 px-4 py-2 text-3xl font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
               onClick={(e) => handleClick(e)}>
               Submit
             </button>

@@ -4,7 +4,7 @@ import Badge, { BadgeVariant } from "Components/Badge";
 import withProtected from "../../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../../util/misc";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { User, Assignment } from "types";
+import { User, Assignment} from "types";
 import Link from "next/link";
 
 type Submission = {
@@ -136,7 +136,7 @@ const AssignmentView: NextPage<AssignmentProps> = ({ assignment,courseId }) => {
           </div>
 
           <Link href={`/course/${courseId}/assignment/${assignment.id}/submit`} className="">
-            <div className=" w-48 h-12 flex justify-center items-center rounded-lg bg-sky-700 text-3xl">
+            <div className="inline-flex items-center rounded border border-transparent bg-cyan-700 px-4 py-2 text-3xl font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
               <h1>Submit</h1>
             </div>
           </Link>
