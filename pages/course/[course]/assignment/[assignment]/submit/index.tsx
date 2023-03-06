@@ -1,13 +1,17 @@
 import withProtected from "../../../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../../../util/misc";
 import { GetServerSidePropsContext, NextPage } from "next";
-import Badge, { BadgeVariant } from "Components/Badge";
+import Badge from "Components/Badge";
 import Sidebar from "Components/Sidebar";
-import { User, Assignment, StudentSubmission } from "types";
+import { Assignment, StudentSubmission } from "types";
+import { loadUser } from "store/userSlice";
+import { getCurrentUser } from "../../../../../../util/misc";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import Upload from "../../../../../../Components/UploadBox";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "hooks";
+
 
 type AssignmentT = Assignment & { submission: StudentSubmission[] };
 
@@ -23,6 +27,7 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
     const courseId = queryParamToNumber(ctx.query?.course);
 
     const supabase = createServerSupabaseClient(ctx);
+
     const assignmentData = await supabase
       .from("assignment")
       .select(
@@ -60,11 +65,27 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
   });
 
 const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment }) => {
+  const dispatch = useAppDispatch()
+  const user = useAppSelector((store) => store.user);
   const supabase = useSupabaseClient();
-  const [userId, setUserId] = useState<string | undefined>(undefined);
-  supabase.auth.getUser().then(({ data }) => {
-    setUserId(data.user?.id);
-  });
+  const [userId, setUserId] = useState<number | undefined>(undefined);
+  
+  useEffect(() => {
+    const getUser = async () => {
+      if (user.id === null) {
+        await getCurrentUser(supabase).then((user) => {
+          if (user) dispatch(loadUser(user));
+          setUserId(user?.id);
+        });
+      }
+      else {
+        setUserId(user.id)
+      }
+    };
+
+    getUser();
+  }, []);
+
   return (
     <div className="flex">
       <Sidebar />
