@@ -14,7 +14,7 @@ const Upload = ({
   bucket: string;
   courseID: number;
   assignmentID: number;
-  userID: string | undefined;
+  userID: number | undefined;
 }) => {
   const routers = useRouter();
   const [file, setFile] = useState<File>();
@@ -24,7 +24,7 @@ const Upload = ({
   
   const fileUpload = async (file?: File) => {
     const fileID = nanoid();
-    let path = `${courseID}/${assignmentID}/${userID}/${fileID}`;
+    let path = `${courseID}/${assignmentID}/${userID}/${fileID}.zip`;
     const { data, error } = await supabase.storage.from(bucket).upload(path, file || "");
     createRecord(fileID);
   }
