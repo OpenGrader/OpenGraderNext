@@ -70,12 +70,12 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
 
     upload(inputPath, inputFile);
     upload(outputPath, outputFile);
-    createRecord(inputPath,outputPath);
+    createRecord(inputPath, outputPath);
     // return Promise.resolve([inputPath, outputPath]);
   };
 
-  const createRecord = async ( inputPath: string, outputPath: string) => {
-    console.log("HERE: " + courseId)
+  const createRecord = async (inputPath: string, outputPath: string) => {
+    console.log("HERE: " + courseId);
     const { data: assignment, error } = await supabase
       .from("assignment")
       .insert({
@@ -90,17 +90,17 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
       })
       .select();
 
-      if (error) {
-        console.log(error)
-        router.push(`/course/${courseId}/assignment`);
-      }
-      const assignmentId = assignment?.[0]?.id;
+    if (error) {
+      console.log(error);
+      router.push(`/course/${courseId}/assignment`);
+    }
+    const assignmentId = assignment?.[0]?.id;
 
-      if (assignmentId) {
-        router.push(`/course/${courseId}/assignment/${assignmentId}`);
-      } else{
-        router.push(`/course/${courseId}/assignment`);
-      }
+    if (assignmentId) {
+      router.push(`/course/${courseId}/assignment/${assignmentId}`);
+    } else {
+      router.push(`/course/${courseId}/assignment`);
+    }
   };
 
   const handleClick = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
@@ -192,12 +192,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
               htmlFor="input-def"
               className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg
-                  aria-hidden="true"
-                  className="w-10 h-10 mb-3 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  className="w-12 h-12 mx-auto text-gray-600">
+                <svg aria-hidden="true" fill="none" stroke="currentColor" className="w-12 h-12 mx-auto text-gray-600">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -235,7 +230,6 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg
                   aria-hidden="true"
-                  className="w-10 h-10 mb-3 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   className="w-12 h-12 mx-auto text-gray-600">
