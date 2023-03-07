@@ -57,7 +57,7 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
       .eq("membership.section", courseId)
       .order("family_name, given_name")
       .then(({ data, error }) => {
-        console.error(error);
+        if (error) console.error(error);
         return data?.map((d) => {
           if (isInstructor)
             return {

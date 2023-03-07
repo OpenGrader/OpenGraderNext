@@ -69,7 +69,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
       .eq("user", profile?.id)
       .order("created_at", { foreignTable: "section.assignment", ascending: false })
       .order("created_at", { foreignTable: "section.assignment.submission", ascending: false });
-    console.error(sections.error);
+    if (sections.error) console.error(sections.error);
 
     // chronologically-ordered list of submissions keyed by submission id
     const allSubmissions = sections.data
@@ -150,8 +150,7 @@ const SectionCard: React.FC<CourseSection["section"] & { submissions: Array<Form
         {course.department} {course.number}.{section_number}{" "}
         <Link
           href={`/course/${id}/assignment`}
-          className="inline-flex items-center rounded border border-transparent bg-cyan-700 px-2.5 py-1 text-xs font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
-        >
+          className="inline-flex items-center rounded border border-transparent bg-cyan-700 px-2.5 py-1 text-xs font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
           View course
         </Link>
       </div>
@@ -192,7 +191,7 @@ const CourseListPage: NextPage<CourseListProps> = ({ sections, submissions }) =>
         <div className="flex justify-between items-center flex-wrap gap-2">
           <h1 className="text-3xl font-bold w-full">Your Courses</h1>
           {sections?.map(({ section }) => (
-            <SectionCard {...section} submissions={submissions[section.id] ?? []} />
+            <SectionCard {...section} submissions={submissions[section.id] ?? []} key={section.id} />
           ))}
         </div>
       </div>

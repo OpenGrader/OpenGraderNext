@@ -39,7 +39,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
       .filter("section", "eq", sectionId)
       .order("created_at", { ascending: false });
 
-    console.error(error);
+    if (error) console.error(error);
 
     const assignments = data?.map((d) => {
       const submission = d.submission as ReturnedSubmission[] | null;
