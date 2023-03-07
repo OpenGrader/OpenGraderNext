@@ -6,6 +6,8 @@ import { useState } from "react";
 import { nanoid } from "nanoid";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
+import { Assignment } from "types";
+
 import { MouseEvent } from "react";
 
 interface CreateAssignmentProps {
@@ -25,9 +27,12 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
 
 const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
   const supabase = useSupabaseClient();
-  const router = useRouter();
   const [inputFile, setInputFile] = useState<File | undefined>();
   const [outputFile, setOutputFile] = useState<File | undefined>();
+  const [title, setTitle] = useState<string>();
+  const [lang, setLang] = useState<string>("c/c++");
+  const [desc, setDesc] = useState<string>();
+  const router = useRouter();
 
   const fileUpload = async () => {
     const upload = async (filePath: string, file: File | undefined) => {
@@ -45,12 +50,65 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
 
     upload(inputPath, inputFile);
     upload(outputPath, outputFile);
+    createRecord(inputPath,outputPath);
+    // return Promise.resolve([inputPath, outputPath]);
   };
 
-  const handleClick = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+  const createRecord = async ( inputPath: string, outputPath: string) => {
+    console.log("HERE: " + courseId)
+    const { data: assignment, error } = await supabase
+      .from("assignment")
+      .insert({
+        section: courseId,
+        title: title,
+        description: desc,
+        is_open: true,
+        is_late: false,
+        input_file: inputPath,
+        output_file: outputPath,
+        language: lang.toLowerCase(),
+      })
+      .select();
+
+      if (error) {
+        console.log(error)
+        router.push(`/course/${courseId}/assignment`);
+      }
+      const assignmentId = assignment?.[0]?.id;
+
+      if (assignmentId) {
+        router.push(`/course/${courseId}/assignment/${assignmentId}`);
+      } else{
+        router.push(`/course/${courseId}/assignment`);
+      }
+  };
+
+  const handleClick = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
     fileUpload();
-    router.push(`/course/${courseId}/assignment`);
+    // let formData = new FormData();
+
+    // formData.append("inputFile", inputFile || "");
+    // formData.append("outputFile", outputFile || "");
+    // formData.append("title", title || "Untitled Assignment");
+    // formData.append("desc", desc || "");
+    // formData.append("lang", lang);
+    // formData.append("courseID", courseId.toString());
+
+    // await fetch("/api/createAssignment", {
+    //   method: "POST",
+    //   body: formData,
+    //   headers: {
+    //     "Content-Type": "multipart/form-data",
+    //   },
+    // })
+    //   .then((response) => {
+    //     router.push(`/course/${courseId}/assignment`);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     router.push(`/course/${courseId}/assignment`);
+    //   });
   };
 
   return (
@@ -58,13 +116,14 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
       <Sidebar />
       <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
         <h1 className="font-bold text-3xl">Create a new assignment</h1>
-        <form method="POST" action="/api/createAssignment" className="grid grid-cols-1 gap-4">
+        <form className="grid grid-cols-1 gap-4">
           <div className="">
             <label htmlFor="title" className="block text-sm font-medium text-gray-200">
               Title
             </label>
             <div className="mt-1">
               <input
+                onChange={(e) => setTitle(e.target.value)}
                 type="text"
                 name="title"
                 id="title"
@@ -79,6 +138,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
             </label>
             <div className="mt-1">
               <textarea
+                onChange={(e) => setDesc(e.target.value)}
                 name="description"
                 id="description"
                 autoComplete="given-name"
@@ -94,6 +154,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
             </label>
             <div className="mt-1">
               <select
+                onChange={(e) => setLang(e.target.value)}
                 id="language"
                 name="language"
                 className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
