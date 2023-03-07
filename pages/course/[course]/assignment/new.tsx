@@ -2,23 +2,57 @@ import Sidebar from "Components/Sidebar";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { queryParamToNumber } from "util/misc";
 import withProtected from "util/withProtected";
+import { useState } from "react";
+import { nanoid } from "nanoid";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
+import { MouseEvent } from "react";
 
 interface CreateAssignmentProps {
-  sectionId: number;
+  courseId: number;
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async (ctx) => {
-    const sectionId = queryParamToNumber(ctx.query?.course);
+    const courseId = queryParamToNumber(ctx.query?.course);
 
     return {
       props: {
-        sectionId,
+        courseId,
       },
     };
   });
 
-const CreateAssignment: NextPage<CreateAssignmentProps> = ({ sectionId }) => {
+const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
+  const supabase = useSupabaseClient();
+  const router = useRouter();
+  const [inputFile, setInputFile] = useState<File | undefined>();
+  const [outputFile, setOutputFile] = useState<File | undefined>();
+
+  const fileUpload = async () => {
+    const upload = async (filePath: string, file: File | undefined) => {
+      await supabase.storage
+        .from("spec-storage")
+        .upload(filePath, file || "")
+        .catch((error) => console.log(error));
+    };
+
+    const inputID = nanoid();
+    const outputID = nanoid();
+
+    const inputPath = `${courseId}/${inputID}.${inputFile?.name.split(".").pop()}`;
+    const outputPath = `${courseId}/${outputID}.${outputFile?.name.split(".").pop()}`;
+
+    upload(inputPath, inputFile);
+    upload(outputPath, outputFile);
+  };
+
+  const handleClick = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    e.preventDefault();
+    fileUpload();
+    router.push(`/course/${courseId}/assignment`);
+  };
+
   return (
     <div className="flex">
       <Sidebar />
@@ -62,8 +96,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ sectionId }) => {
               <select
                 id="language"
                 name="language"
-                className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-              >
+                className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                 <option>C/C++</option>
                 <option>Python</option>
                 <option>JavaScript</option>
@@ -72,82 +105,95 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ sectionId }) => {
             </div>
           </div>
 
-          <div className="">
-            <label htmlFor="input-def" className="block text-sm font-medium text-gray-300">
-              Input definition
-            </label>
-            <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-700 px-6 pt-5 pb-6">
-              <div className="space-y-1 text-center">
+          <div className="pb-4">
+            <h1 className="text-sm font-medium text-gray-300 pb-2">Input definition</h1>
+            <label
+              htmlFor="input-def"
+              className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                  className="w-10 h-10 mb-3 text-gray-400"
                   fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
                   stroke="currentColor"
-                  className="w-12 h-12 mx-auto text-gray-600"
-                >
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                  />
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                 </svg>
-
-                <div className="flex text-sm text-gray-400">
-                  <label
-                    htmlFor="input-def"
-                    className="relative cursor-pointer rounded-md font-medium text-blue-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-400 focus-within:ring-offset-2 ring-offset-slate-900 hover:text-blue-400 focus:outline-none"
-                  >
-                    <span>Upload a file</span>
-                    <input id="input-def" name="input-def" type="file" className="sr-only" />
-                  </label>
-                  <p className="pl-1">or drag and drop</p>
-                </div>
-                <p className="text-xs text-gray-400">Text file up to 1MB</p>
+                {!inputFile ? (
+                  <>
+                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                      <span className="font-semibold">Click to upload</span>
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">.zip (max. 50MB)</p>
+                  </>
+                ) : (
+                  <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                    Currently selected: <span className="font-semibold">{inputFile?.name}</span>
+                  </p>
+                )}
               </div>
-            </div>
+              <input
+                id="input-def"
+                type="file"
+                className="hidden"
+                accept=".txt"
+                onChange={(e) => setInputFile(e.target.files?.[0])}
+              />
+            </label>
           </div>
 
-          <div className="">
-            <label htmlFor="output-def" className="block text-sm font-medium text-gray-300">
-              Output definition
-            </label>
-            <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-700 px-6 pt-5 pb-6">
-              <div className="space-y-1 text-center">
+          <div className="pb-4">
+            <h1 className="text-sm font-medium text-gray-300 pb-2">Output definition</h1>
+            <label
+              htmlFor="output-def"
+              className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                  className="w-10 h-10 mb-3 text-gray-400"
                   fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
                   stroke="currentColor"
-                  className="w-12 h-12 mx-auto text-gray-600"
-                >
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                  />
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                 </svg>
-
-                <div className="flex text-sm text-gray-400">
-                  <label
-                    htmlFor="output-def"
-                    className="relative cursor-pointer rounded-md font-medium text-blue-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-400 focus-within:ring-offset-2 ring-offset-slate-900 hover:text-blue-400 focus:outline-none"
-                  >
-                    <span>Upload a file</span>
-                    <input id="output-def" name="output-def" type="file" className="sr-only" />
-                  </label>
-                  <p className="pl-1">or drag and drop</p>
-                </div>
-                <p className="text-xs text-gray-400">Text file up to 1MB</p>
+                {!outputFile ? (
+                  <>
+                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                      <span className="font-semibold">Click to upload</span>
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">.zip (max. 50MB)</p>
+                  </>
+                ) : (
+                  <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                    Currently selected: <span className="font-semibold">{outputFile?.name}</span>
+                  </p>
+                )}
               </div>
-            </div>
+              <input
+                id="output-def"
+                type="file"
+                className="hidden"
+                accept=".txt"
+                onChange={(e) => setOutputFile(e.target.files?.[0])}
+              />
+            </label>
           </div>
-          <input type="hidden" value={sectionId} name="section" id="section" />
+
+          <input type="hidden" value={courseId} name="section" id="section" />
           <button
-            type="submit"
-            className="text-center items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium leading-4 ring-offset-slate-900 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
+            type="button"
+            onClick={(e) => handleClick(e)}
+            className="text-center items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium leading-4 ring-offset-slate-900 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
             Create
           </button>
         </form>
