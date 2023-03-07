@@ -14,7 +14,7 @@ const CodeBrowser: React.FC<CodeBrowserProps> = ({ language, code }) => {
     return <div>Value is undefined or null</div>
   }
   const html = Prism.highlight(code, Prism.languages[language], language);
-  return <pre className="leading-6 text-md" style={{ fontFamily: "Jetbrains Mono, monospace"}} dangerouslySetInnerHTML={{ __html: html }} />;
+  return <pre className="leading-6 text-md font-mono" dangerouslySetInnerHTML={{ __html: html }} />;
 };
 
 export default CodeBrowser;
