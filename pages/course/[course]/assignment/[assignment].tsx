@@ -7,6 +7,7 @@ import { queryParamToNumber } from "../../../../util/misc";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { User, Assignment } from "types";
 import CodeBrowser from "Components/CodeBrowser";
+import { supabaseAdmin } from "util/supabaseClient";
 
 type Submission = {
   id: string;
@@ -14,6 +15,7 @@ type Submission = {
   score: number | null;
   flags: string[] | null;
   student: User;
+  file: string;
 };
 
 type AssignmentT = Assignment & { submission: Submission[] };
@@ -22,6 +24,7 @@ interface AssignmentProps {
   id: number;
   courseId: number;
   assignment: AssignmentT;
+  file: string;
 }
 
 export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
@@ -30,6 +33,15 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
     const courseId = queryParamToNumber(ctx.query?.course);
 
     const supabase = createServerSupabaseClient(ctx);
+
+    let blob;
+    let code;
+    blob = await supabaseAdmin.storage.from("assignments").download(`8/5_hw1.py`);  //hardcoded; going to fix ASAP;
+    
+    if (blob != null && blob.data != null){
+      code = await blob.data.text();
+    }
+
     const assignmentData = await supabase
       .from("assignment")
       .select(
@@ -62,6 +74,7 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
         id: assignmentId,
         courseId,
         assignment: assignmentData.data,
+        file: code,
       },
     };
   });
@@ -78,36 +91,35 @@ const flagClass = (flag: string): BadgeVariant => {
       return "cyan";
   }
 };
-var samplePythonCode = "x = str(100)";
 
-const SubmissionCard: React.FC<Submission> = (submission) => {
+const SubmissionCard: React.FC<Submission & {file: string }> = ({id, is_late, score, flags, student, file}) => {
   const [isSubmissionCardClicked, setIsSubmissionCardClicked] = useState(false);
   const handleSubmissionCardClick = () => {
     setIsSubmissionCardClicked(true);
   };
   let studentDesc: string;
-  if (submission.student.given_name || submission.student.family_name) {
-    studentDesc = `${submission.student.given_name} ${submission.student.family_name}`;
+  if (student.given_name || student.family_name) {
+    studentDesc = `${student.given_name} ${student.family_name}`;
   } else {
-    studentDesc = submission.student.euid;
+    studentDesc = student.euid;
   }
 
   return (
     <div onClick={handleSubmissionCardClick}>
       <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-slate-800 shadow w-full">
         <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-2">
-          {studentDesc} {submission.is_late && <Badge variant="red">Late</Badge>}
+          {studentDesc} {is_late && <Badge variant="red">Late</Badge>}
         </div>
         <div className="px-4 py-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
             <div className="font-bold">Score</div>
-            <div className="my-1">{submission.score ? submission.score : "Ungraded"}</div>
+            <div className="my-1">{score ? score : "Ungraded"}</div>
           </div>
           <div>
             <div className="font-bold">Flags</div>
             <div className="flex gap-2 flex-wrap my-1">
-              {submission.flags && submission.flags.length > 0
-                ? submission.flags.map((flag) => <Badge variant={flagClass(flag)}>{flag}</Badge>)
+              {flags && flags.length > 0
+                ? flags.map((flag) => <Badge variant={flagClass(flag)}>{flag}</Badge>)
                 : "No flags"}
             </div>
           </div>
@@ -120,7 +132,7 @@ const SubmissionCard: React.FC<Submission> = (submission) => {
   );
 };
 
-const AssignmentView: NextPage<AssignmentProps> = ({ assignment }) => {
+const AssignmentView: NextPage<AssignmentProps> = ({ assignment, file }) => {
   return (
     <div className="flex">
       <Sidebar />
@@ -142,7 +154,24 @@ const AssignmentView: NextPage<AssignmentProps> = ({ assignment }) => {
         </h1>
         <p>{assignment.description}</p>
         <h2 className="font-semibold text-2xl text-slate-50">Submissions</h2>
-        {assignment.submission.map(SubmissionCard)}
+          {assignment.submission.map(submission => {
+            if (typeof submission.student === "number") {
+              return null;
+            }
+            return (
+              submission.student && (
+                <SubmissionCard
+                  id={submission.id.toString()}
+                  is_late={submission.is_late}
+                  score={submission.score}
+                  flags={submission.flags}
+                  student={submission.student}
+                  file={file}
+                />
+              )
+            )
+          }
+          )}
       </div>
     </div>
   );
