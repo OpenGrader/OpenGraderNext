@@ -11,7 +11,7 @@ import Upload from "../../../../../../Components/UploadBox";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "hooks";
-
+import { useRouter } from "next/router";
 
 type AssignmentT = Assignment & { submission: StudentSubmission[] };
 
@@ -65,10 +65,12 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
   });
 
 const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment }) => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const user = useAppSelector((store) => store.user);
   const supabase = useSupabaseClient();
   const [userId, setUserId] = useState<number | undefined>(undefined);
+  
   
   useEffect(() => {
     const getUser = async () => {
@@ -77,9 +79,11 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
           if (user) dispatch(loadUser(user));
           setUserId(user?.id);
         });
+      } else {
+        setUserId(user.id);
       }
-      else {
-        setUserId(user.id)
+      if (assignment === null) {
+        router.push("/course");
       }
     };
 
@@ -89,10 +93,11 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
   return (
     <div className="flex">
       <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
+      {
+        assignment !== null && <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
         <h1 className="font-bold text-3xl text-slate-50 flex flex-wrap items-center gap-4">
-          Assignment: {assignment.title}{" "}
-          {assignment.is_open ? (
+          Assignment: {assignment?.title}{" "}
+          {assignment?.is_open ? (
             <>
               <Badge variant="green">Open</Badge>
               {assignment.is_late ? (
@@ -105,11 +110,12 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
             <Badge variant="red">Locked</Badge>
           )}{" "}
         </h1>
-        <p>{assignment.description}</p>
+        <p>{assignment?.description}</p>
         <div className="">
           <Upload bucket="assignments" courseID={courseId} assignmentID={id} userID={userId} />
         </div>
       </div>
+      }
     </div>
   );
 };
