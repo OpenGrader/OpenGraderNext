@@ -17,20 +17,19 @@ const Upload = ({
   userID: number | undefined;
 }) => {
   const routers = useRouter();
-  const [file, setFile] = useState<File>();
-  const [fileName, setFileName] = useState<string | undefined>("");
+  const [file, setFile] = useState<File | undefined>();
   const supabase = useSupabaseClient();
 
   
   const fileUpload = async (file?: File) => {
     const fileID = nanoid();
-    const extension = fileName?.split('.').pop();
+    const extension = file?.name.split(".").pop();
     let path = `${courseID}/${assignmentID}/${userID}/${fileID}.${extension}`;
     const { data, error } = await supabase.storage.from(bucket).upload(path, file || "");
-    createRecord(fileID);
+    createRecord(fileID,file?.name || "Unnamed");
   }
 
-  const createRecord = async (nanoID: string) => {
+  const createRecord = async (nanoID: string,fileName: string) => {
     const { data, error } = await supabase.from("student_Submission").insert([
       {
         course_ID: courseID,
@@ -48,9 +47,6 @@ const Upload = ({
     routers.push("/course");
   };
 
-  useEffect(() => {
-    setFileName(file?.name);
-  }, [file]);
 
   return (
     <>
@@ -73,7 +69,7 @@ const Upload = ({
                   strokeWidth="2"
                   d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
               </svg>
-              {!fileName ? (
+              {!file ? (
                 <>
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                     <span className="font-semibold">Click to upload</span>
@@ -82,7 +78,7 @@ const Upload = ({
                 </>
               ) : (
                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                  Currently selected: <span className="font-semibold">{fileName}</span>
+                  Currently selected: <span className="font-semibold">{file?.name}</span>
                 </p>
               )}
             </div>
