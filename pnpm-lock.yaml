@@ -1,7 +1,6 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@fontsource/fira-code': ^4.5.13
   '@headlessui/react': ^1.7.4
   '@reduxjs/toolkit': ^1.9.3
   '@supabase/auth-helpers-nextjs': ^0.5.2
@@ -42,7 +41,6 @@ dependencies:
   '@tailwindcss/forms': 0.5.3_tailwindcss@3.2.1
   '@tippyjs/react': 4.2.6_biqbaboplfbrettd7655fr4n2y
   '@types/react-redux': 7.1.25
-  csstype: 3.1.1
   eslint: 8.26.0
   eslint-config-next: 13.0.2_wyqvi574yv7oiwfeinomdzmc3m
   nanoid: 4.0.1
@@ -97,10 +95,6 @@ packages:
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /@fontsource/fira-code/4.5.13:
-    resolution: {integrity: sha512-T1IG6/2AXSwEKwlrEm3kyIL3RQTMblPyj68HgnBGl0IBGFxgS5LZ7StRdDo/QimJ4Tz6FQGHuy1Y/ShNxaUefA==}
     dev: false
 
   /@headlessui/react/1.7.4_biqbaboplfbrettd7655fr4n2y:
