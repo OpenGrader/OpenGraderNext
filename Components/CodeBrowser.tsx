@@ -8,6 +8,11 @@ interface CodeBrowserProps {
 }
 
 const CodeBrowser: React.FC<CodeBrowserProps> = ({ language, code }) => {
+  if (typeof code !== "string"){
+    return <div>Value is in wrong format</div>
+  } else if (typeof code === 'undefined' || typeof code === null){
+    return <div>Value is undefined or null</div>
+  }
   const html = Prism.highlight(code, Prism.languages[language], language);
   return <pre dangerouslySetInnerHTML={{ __html: html }} />;
 };
