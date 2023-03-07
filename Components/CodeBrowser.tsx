@@ -9,7 +9,7 @@ interface CodeBrowserProps {
 
 const CodeBrowser: React.FC<CodeBrowserProps> = ({ language, code }) => {
   const html = Prism.highlight(code, Prism.languages[language], language);
-  return <pre className="leading-6 text-md font-mono" dangerouslySetInnerHTML={{ __html: html }} />;
+  return <pre dangerouslySetInnerHTML={{ __html: html }} />;
 };
-
+// className="leading-6 text-md font-mono font-Fira_Code"
 export default CodeBrowser;
