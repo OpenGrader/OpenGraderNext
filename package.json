@@ -8,6 +8,7 @@
     "format:fix": "prettier --write --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@fontsource/fira-code": "^4.5.13",
     "@headlessui/react": "^1.7.4",
     "@reduxjs/toolkit": "^1.9.3",
     "@supabase/auth-helpers-nextjs": "^0.5.2",
