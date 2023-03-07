@@ -3,8 +3,6 @@ import { NextApiHandler } from "next";
 import { getCurrentUser } from "util/misc";
 import { supabaseAdmin } from "util/supabaseClient";
 import { nanoid } from "nanoid";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-
 export const handler: NextApiHandler = async (req, res) => {
   const body = req.body;
 
