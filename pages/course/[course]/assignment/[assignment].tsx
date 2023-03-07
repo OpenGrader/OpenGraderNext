@@ -95,7 +95,7 @@ const flagClass = (flag: string): BadgeVariant => {
 const SubmissionCard: React.FC<Submission & {file: string }> = ({id, is_late, score, flags, student, file}) => {
   const [isSubmissionCardClicked, setIsSubmissionCardClicked] = useState(false);
   const handleSubmissionCardClick = () => {
-    setIsSubmissionCardClicked(true);
+    setIsSubmissionCardClicked(prevState => !prevState);
   };
   let studentDesc: string;
   if (student.given_name || student.family_name) {
