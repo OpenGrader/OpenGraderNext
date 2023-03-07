@@ -112,7 +112,9 @@ const SubmissionCard: React.FC<Submission> = (submission) => {
             </div>
           </div>
         </div>
-        {isSubmissionCardClicked && <CodeBrowser language="python" code={samplePythonCode} />}
+        <div className="pl-6">
+          {isSubmissionCardClicked && <CodeBrowser language="python" code={file} />}
+        </div>
       </div>
     </div>
   );
