@@ -38,7 +38,7 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
     let code;
     blob = await supabaseAdmin.storage.from("assignments").download(`8/5_hw1.py`); //hardcoded; going to fix ASAP;
 
-    if (blob != null && blob.data != null) {
+    if (blob?.data != null) {
       code = await blob.data.text();
     }
 
