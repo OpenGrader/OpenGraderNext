@@ -5,6 +5,9 @@ import withProtected from "util/withProtected";
 import { getCurrentUser, queryParamToNumber } from "util/misc";
 import Sidebar from "Components/Sidebar";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import AddUserModal from "Components/AddUserModal";
+import { useState } from "react";
+import RemoveUserModal from "Components/RemoveUserModal";
 
 interface StudentsProps {
   students: (User & { membership: { id: number; role: "STUDENT" | "INSTRUCTOR" }[] })[];
@@ -18,6 +21,7 @@ interface StudentsProps {
     section_number: string;
   };
   isInstructor: boolean;
+  allUsers: User[];
 }
 
 export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
@@ -101,6 +105,10 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
         });
       });
 
+    const { data: allUsers } = await supabase
+      .from("user")
+      .select("id, given_name, family_name, euid, membership ( section )");
+
     console.log({ course });
 
     return {
@@ -108,6 +116,16 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
         students,
         section: course,
         isInstructor,
+        allUsers: allUsers?.filter((user) => {
+          if (user) {
+            if (Array.isArray(user.membership)) {
+              return user.membership.every(({ section }) => section !== courseId);
+            } else if (user.membership) {
+              return user.membership.section !== courseId;
+            }
+            return true;
+          }
+        }),
       },
     };
   });
@@ -131,7 +149,8 @@ const Warnings = ({ Alerts }: { Alerts: Alerts }) => {
 const UserBlock: React.FC<{
   user: User & { membership: { id: number; role: "STUDENT" | "INSTRUCTOR" }[] };
   isInstructor: boolean;
-}> = ({ user, isInstructor }) => {
+  openDeleteModal: (u: User) => void;
+}> = ({ user, isInstructor, openDeleteModal }) => {
   const showStudentDetails = isInstructor && user.membership.some(({ role }) => role === "STUDENT");
   return (
     <div className="bg-slate-800 w-full p-3 rounded-md">
@@ -149,7 +168,10 @@ const UserBlock: React.FC<{
         </div>
         {isInstructor && (
           <h1 className="text-slate-400">
-            View | Edit | <span className="text-red-900">Delete</span>
+            View | Edit |{" "}
+            <button onClick={() => openDeleteModal(user)} className="text-red-900">
+              Delete
+            </button>
           </h1>
         )}
       </div>
@@ -157,20 +179,78 @@ const UserBlock: React.FC<{
   );
 };
 
-const People: NextPage<StudentsProps> = ({ students, section, isInstructor }) => {
+const People: NextPage<StudentsProps> = ({ students, section, isInstructor, allUsers }) => {
   console.log(students);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [removeModalOpen, setRemoveModalOpen] = useState(false);
+  const [userToRemove, setUserToRemove] = useState<User>();
+
+  const createUserAssignment = async (userId: number) => {
+    await fetch(`/api/assignStudent`, {
+      method: "POST",
+      body: JSON.stringify({
+        sectionId: section.id,
+        userId,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  };
+
+  const removeUser = async (userId: number) => {
+    await fetch("/api/removeUserAssignment", {
+      method: "POST",
+      body: JSON.stringify({
+        sectionId: section.id,
+        userId,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  };
+
+  const openDeleteModal = (user: User) => {
+    setUserToRemove(user);
+    setRemoveModalOpen(true);
+  };
+
   return (
     <div className="flex">
       <Sidebar />
+      {isInstructor && (
+        <>
+          <AddUserModal
+            users={allUsers}
+            open={addModalOpen}
+            setOpen={setAddModalOpen}
+            assignUser={createUserAssignment}
+          />
+          <RemoveUserModal
+            user={userToRemove}
+            open={removeModalOpen}
+            setOpen={setRemoveModalOpen}
+            removeUser={removeUser}
+          />{" "}
+        </>
+      )}
       <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 h-screen w-10/12 ml-auto">
         <h1 className="text-3xl font-bold">
           People - {section.course.department} {section.course.number}.{section.section_number}
         </h1>
+        <button
+          onClick={() => setAddModalOpen(true)}
+          className="inline-flex whitespace-nowrap w-min items-center rounded border border-transparent bg-cyan-700 px-2.5 py-1 text-sm font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
+          Add new
+        </button>
         <h2 className="mt-6 text-xl font-semibold">Instructors</h2>
         {students
           .filter(({ membership }) => membership.some(({ role }) => role === "INSTRUCTOR"))
           .map((instructor, index) => {
-            return <UserBlock user={instructor} isInstructor={isInstructor} key={index} />;
+            return (
+              <UserBlock user={instructor} isInstructor={isInstructor} key={index} openDeleteModal={openDeleteModal} />
+            );
           })}
         <h2 className="mt-6 text-xl font-semibold">Students</h2>
 
@@ -178,7 +258,9 @@ const People: NextPage<StudentsProps> = ({ students, section, isInstructor }) =>
           {students
             .filter(({ membership }) => membership.some(({ role }) => role === "STUDENT"))
             .map((student, index) => {
-              return <UserBlock user={student} isInstructor={isInstructor} key={index} />;
+              return (
+                <UserBlock user={student} isInstructor={isInstructor} key={index} openDeleteModal={openDeleteModal} />
+              );
             })}
         </div>
       </div>
