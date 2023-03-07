@@ -3,8 +3,9 @@ import { supabaseAdmin } from "util/supabaseClient";
 
 export const handler: NextApiHandler = async (req, res) => {
   const body = req.body;
-
+  console.log("HERE")
   console.log({ body });
+  
 
   const { data: assignment, error } = await supabaseAdmin
     .from("assignment")
@@ -16,7 +17,7 @@ export const handler: NextApiHandler = async (req, res) => {
       is_late: false,
       input_file: body["input-def"],
       output_file: body["output-def"],
-      language: body.language.toLowerCase(),
+      language: String(body.language).toLowerCase(),
     })
     .select();
 
