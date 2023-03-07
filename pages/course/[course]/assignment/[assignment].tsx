@@ -36,9 +36,9 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
 
     let blob;
     let code;
-    blob = await supabaseAdmin.storage.from("assignments").download(`8/5_hw1.py`);  //hardcoded; going to fix ASAP;
-    
-    if (blob != null && blob.data != null){
+    blob = await supabaseAdmin.storage.from("assignments").download(`8/5_hw1.py`); //hardcoded; going to fix ASAP;
+
+    if (blob != null && blob.data != null) {
       code = await blob.data.text();
     }
 
@@ -92,10 +92,10 @@ const flagClass = (flag: string): BadgeVariant => {
   }
 };
 
-const SubmissionCard: React.FC<Submission & {file: string }> = ({id, is_late, score, flags, student, file}) => {
+const SubmissionCard: React.FC<Submission & { file: string }> = ({ id, is_late, score, flags, student, file }) => {
   const [isSubmissionCardClicked, setIsSubmissionCardClicked] = useState(false);
   const handleSubmissionCardClick = () => {
-    setIsSubmissionCardClicked(prevState => !prevState);
+    setIsSubmissionCardClicked((prevState) => !prevState);
   };
   let studentDesc: string;
   if (student.given_name || student.family_name) {
@@ -124,9 +124,7 @@ const SubmissionCard: React.FC<Submission & {file: string }> = ({id, is_late, sc
             </div>
           </div>
         </div>
-        <div className="pl-6">
-          {isSubmissionCardClicked && <CodeBrowser language="python" code={file} />}
-        </div>
+        <div className="pl-6">{isSubmissionCardClicked && <CodeBrowser language="python" code={file} />}</div>
       </div>
     </div>
   );
@@ -154,24 +152,23 @@ const AssignmentView: NextPage<AssignmentProps> = ({ assignment, file }) => {
         </h1>
         <p>{assignment.description}</p>
         <h2 className="font-semibold text-2xl text-slate-50">Submissions</h2>
-          {assignment.submission.map(submission => {
-            if (typeof submission.student === "number") {
-              return null;
-            }
-            return (
-              submission.student && (
-                <SubmissionCard
-                  id={submission.id.toString()}
-                  is_late={submission.is_late}
-                  score={submission.score}
-                  flags={submission.flags}
-                  student={submission.student}
-                  file={file}
-                />
-              )
-            )
+        {assignment.submission.map((submission) => {
+          if (typeof submission.student === "number") {
+            return null;
           }
-          )}
+          return (
+            submission.student && (
+              <SubmissionCard
+                id={submission.id.toString()}
+                is_late={submission.is_late}
+                score={submission.score}
+                flags={submission.flags}
+                student={submission.student}
+                file={file}
+              />
+            )
+          );
+        })}
       </div>
     </div>
   );
