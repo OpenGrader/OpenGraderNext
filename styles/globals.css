@@ -10,3 +10,11 @@
 body {
   @apply bg-slate-900 text-slate-100;
 }
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&display=swap");
+pre,
+span.token.string,
+span.token.keyword,
+span.token.builtin,
+span.token.punctuation {
+  font-family: "Fira Code", monospace;
+}

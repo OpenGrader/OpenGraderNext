@@ -1,6 +1,7 @@
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import Sidebar from "Components/Sidebar";
 import { GetServerSidePropsContext, NextPage } from "next";
-import { queryParamToNumber } from "util/misc";
+import { getCurrentUser, queryParamToNumber } from "util/misc";
 import withProtected from "util/withProtected";
 import { useState } from "react";
 import { nanoid } from "nanoid";
@@ -17,6 +18,25 @@ interface CreateAssignmentProps {
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async (ctx) => {
     const courseId = queryParamToNumber(ctx.query?.course);
+
+    const supabase = createServerSupabaseClient(ctx);
+    const user = await getCurrentUser(supabase);
+
+    const { data: currentUserMembership } = await supabase
+      .from("membership")
+      .select("role")
+      .eq("section", courseId)
+      .eq("user", user?.id)
+      .single();
+
+    if (!currentUserMembership || currentUserMembership.role === "STUDENT") {
+      return {
+        redirect: {
+          destination: `/course/${courseId}/assignment`,
+          permanent: false,
+        },
+      };
+    }
 
     return {
       props: {
@@ -177,8 +197,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
                   className="w-10 h-10 mb-3 text-gray-400"
                   fill="none"
                   stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg">
+                  className="w-12 h-12 mx-auto text-gray-600">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -219,8 +238,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
                   className="w-10 h-10 mb-3 text-gray-400"
                   fill="none"
                   stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg">
+                  className="w-12 h-12 mx-auto text-gray-600">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
