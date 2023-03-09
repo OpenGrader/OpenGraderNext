@@ -18,3 +18,33 @@ span.token.builtin,
 span.token.punctuation {
   font-family: "Fira Code", monospace;
 }
+
+.code-browser {
+  display: flex;
+}
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 0;
+}
+
+.line-number {
+  font-family: "Fira Code", monospace;
+  text-align: right;
+  color: #aaa;
+  padding-right: 10px;
+  user-select: none;
+  -moz-user-select: none;
+}
+
+.line-code {
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  white-space: pre-wrap;
+  tab-size: 4;
+}
