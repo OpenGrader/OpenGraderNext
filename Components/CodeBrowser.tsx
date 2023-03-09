@@ -8,8 +8,27 @@ interface CodeBrowserProps {
 }
 
 const CodeBrowser: React.FC<CodeBrowserProps> = ({ language, code }) => {
-  const html = Prism.highlight(code, Prism.languages[language], language);
-  return <pre dangerouslySetInnerHTML={{ __html: html }} />;
+  const lines = code.split("\n");
+  return (
+  <div className="code-browser">
+    <table>
+      <tbody>
+        {lines.map((line, index) => (
+          <tr key={index}>
+            <td className="line-number">{index + 1}</td>
+            <td>
+              <pre
+                className="line-code"
+                dangerouslySetInnerHTML={{
+                  __html: Prism.highlight(line, Prism.languages[language], language),
+                }}
+              />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>)
 };
 // className="leading-6 text-md font-mono font-Fira_Code"
 export default CodeBrowser;
