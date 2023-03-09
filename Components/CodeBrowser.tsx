@@ -1,10 +1,20 @@
 import Prism from "prismjs"; //used for syntax highlighting
 import "prismjs/components/prism-python"; //supports syntax highlighting for python only
 import "prismjs/themes/prism-okaidia.css"; //stylizes syntax highlighting
+import { listeners } from "process";
 
 interface CodeBrowserProps {
   language: string;
   code: string;
+}
+
+interface Comment {
+  lineNumber: number;
+  text: string;
+}
+
+interface CommentsProps {
+  comments: Comment[];
 }
 
 const CodeBrowser: React.FC<CodeBrowserProps> = ({ language, code }) => {
@@ -30,5 +40,4 @@ const CodeBrowser: React.FC<CodeBrowserProps> = ({ language, code }) => {
     </table>
   </div>)
 };
-// className="leading-6 text-md font-mono font-Fira_Code"
 export default CodeBrowser;
