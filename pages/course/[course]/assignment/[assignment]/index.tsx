@@ -4,7 +4,7 @@ import Badge, { BadgeVariant } from "Components/Badge";
 import withProtected from "../../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../../util/misc";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { User, Assignment} from "types";
+import { User, Assignment } from "types";
 import Link from "next/link";
 
 type Submission = {
@@ -109,7 +109,7 @@ const SubmissionCard: React.FC<Submission> = (submission) => {
   );
 };
 
-const AssignmentView: NextPage<AssignmentProps> = ({ assignment,courseId }) => {
+const AssignmentView: NextPage<AssignmentProps> = ({ assignment, courseId }) => {
   return (
     <div className="flex">
       <Sidebar />
