@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import Sidebar from "Components/Sidebar";
 import { GetServerSideProps, NextPage } from "next";
+import { useState } from "react";
 import withProtected from "util/withProtected";
 
 interface ProfilePageProps {
@@ -48,6 +49,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) =>
   });
 
 export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
+  const [givenName, setGivenName] = useState(profile.given_name);
+  const [familyName, setFamilyName] = useState(profile.family_name);
+  const [euid, setEuid] = useState(profile.euid);
+  const [email, setEmail] = useState(profile.email);
+
   return (
     <div className="flex">
       {!isNew && <Sidebar />}
@@ -66,7 +72,8 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
                   id="given_name"
                   autoComplete="given-name"
                   required
-                  value={profile.given_name}
+                  value={givenName}
+                  onChange={(e) => setGivenName(e.target.value)}
                   className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 />
               </div>
@@ -82,7 +89,8 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
                   id="family_name"
                   autoComplete="family-name"
                   required
-                  value={profile.family_name}
+                  value={familyName}
+                  onChange={(e) => setFamilyName(e.target.value)}
                   className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 />
               </div>
@@ -100,7 +108,8 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
                   required
                   maxLength={7}
                   minLength={3}
-                  value={profile.euid}
+                  value={euid}
+                  onChange={(e) => setEuid(e.target.value)}
                   className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 />
               </div>
@@ -116,7 +125,8 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
                   id="email"
                   autoComplete="email"
                   required
-                  value={profile.email}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 />
               </div>
@@ -125,8 +135,7 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
           <input type="hidden" value={profile.id} name="id" id="id" />
           <button
             type="submit"
-            className="text-center items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium leading-4 ring-offset-slate-900 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
+            className="text-center items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium leading-4 ring-offset-slate-900 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
             Update profile
           </button>
         </form>
