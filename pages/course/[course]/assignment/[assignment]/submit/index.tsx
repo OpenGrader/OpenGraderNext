@@ -78,6 +78,7 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
         await getCurrentUser(supabase).then((user) => {
           if (user) dispatch(loadUser(user));
           setUserId(user?.id);
+          
         });
       } else {
         setUserId(user.id);
