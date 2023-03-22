@@ -4,7 +4,6 @@ import { Router, useRouter } from "next/router";
 import { nanoid } from "nanoid";
 import { MouseEvent } from "react";
 
-
 const Upload = ({
   bucket,
   courseID,
@@ -20,16 +19,15 @@ const Upload = ({
   const [file, setFile] = useState<File | undefined>();
   const supabase = useSupabaseClient();
 
-  
   const fileUpload = async (file?: File) => {
     const fileID = nanoid();
     const extension = file?.name.split(".").pop();
     let path = `${courseID}/${assignmentID}/${userID}/${fileID}.${extension}`;
     const { data, error } = await supabase.storage.from(bucket).upload(path, file || "");
-    createRecord(fileID,file?.name || "Unnamed");
-  }
+    createRecord(fileID, file?.name || "Unnamed", path);
+  };
 
-  const createRecord = async (nanoID: string,fileName: string) => {
+  const createRecord = async (nanoID: string, fileName: string, path: string) => {
     const { data, error } = await supabase.from("student_Submission").insert([
       {
         course_ID: courseID,
@@ -37,6 +35,7 @@ const Upload = ({
         user_ID: userID,
         file_Name: fileName,
         nanoID: nanoID,
+        file_Path: path,
       },
     ]);
   };
@@ -46,7 +45,6 @@ const Upload = ({
     fileUpload(file);
     routers.push("/course");
   };
-
 
   return (
     <>
