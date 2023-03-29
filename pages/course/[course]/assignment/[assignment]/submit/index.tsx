@@ -80,6 +80,24 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
   const [userId, setUserId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
+    const setLanguage = () => {
+      switch (assignment.language) {
+        case "c/c++": {
+          return ".cpp, .c";
+        }
+        case "python": {
+          return ".py";
+        }
+        case "javascript": {
+          return ".js";
+        }
+        case "java": {
+          return ".java";
+        }
+      }
+      return ".zip";
+    };
+
     const getUser = async () => {
       if (user.id === null) {
         await getCurrentUser(supabase).then((user) => {
