@@ -15,7 +15,6 @@ const Upload = ({
   courseID: number;
   assignmentID: number;
   userID: number | undefined;
-
   fileType?:string;
 }) => {
   const routers = useRouter();
