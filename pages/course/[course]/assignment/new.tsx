@@ -61,7 +61,6 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
         .upload(filePath, file || "")
         .catch((error) => console.log(error));
     };
-
     const inputID = nanoid();
     const outputID = nanoid();
 
@@ -106,29 +105,6 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
   const handleClick = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
     fileUpload();
-    // let formData = new FormData();
-
-    // formData.append("inputFile", inputFile || "");
-    // formData.append("outputFile", outputFile || "");
-    // formData.append("title", title || "Untitled Assignment");
-    // formData.append("desc", desc || "");
-    // formData.append("lang", lang);
-    // formData.append("courseID", courseId.toString());
-
-    // await fetch("/api/createAssignment", {
-    //   method: "POST",
-    //   body: formData,
-    //   headers: {
-    //     "Content-Type": "multipart/form-data",
-    //   },
-    // })
-    //   .then((response) => {
-    //     router.push(`/course/${courseId}/assignment`);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     router.push(`/course/${courseId}/assignment`);
-    //   });
   };
 
   return (
@@ -228,11 +204,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
               htmlFor="output-def"
               className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg
-                  aria-hidden="true"
-                  fill="none"
-                  stroke="currentColor"
-                  className="w-12 h-12 mx-auto text-gray-600">
+                <svg aria-hidden="true" fill="none" stroke="currentColor" className="w-12 h-12 mx-auto text-gray-600">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
