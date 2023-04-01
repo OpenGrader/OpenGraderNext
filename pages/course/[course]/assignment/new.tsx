@@ -61,7 +61,6 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
         .upload(filePath, file || "")
         .catch((error) => console.log(error));
     };
-
     const inputID = nanoid();
     const outputID = nanoid();
 
