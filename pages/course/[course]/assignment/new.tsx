@@ -61,7 +61,6 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
         .upload(filePath, file || "")
         .catch((error) => console.log(error));
     };
-
     const inputID = nanoid();
     const outputID = nanoid();
 
@@ -106,29 +105,6 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
   const handleClick = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
     fileUpload();
-    // let formData = new FormData();
-
-    // formData.append("inputFile", inputFile || "");
-    // formData.append("outputFile", outputFile || "");
-    // formData.append("title", title || "Untitled Assignment");
-    // formData.append("desc", desc || "");
-    // formData.append("lang", lang);
-    // formData.append("courseID", courseId.toString());
-
-    // await fetch("/api/createAssignment", {
-    //   method: "POST",
-    //   body: formData,
-    //   headers: {
-    //     "Content-Type": "multipart/form-data",
-    //   },
-    // })
-    //   .then((response) => {
-    //     router.push(`/course/${courseId}/assignment`);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     router.push(`/course/${courseId}/assignment`);
-    //   });
   };
 
   return (
