@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import Sidebar from "Components/Sidebar";
 import { GetServerSidePropsContext, NextPage } from "next";
 import Link from "next/link";
+import { HiPlusCircle } from "react-icons/hi";
 import { Assignment, Submission } from "types";
 import { getCurrentUser } from "util/misc";
 import withProtected from "util/withProtected";
@@ -189,7 +190,14 @@ const CourseListPage: NextPage<CourseListProps> = ({ sections, submissions }) =>
       <Sidebar />
       <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
         <div className="flex justify-between items-center flex-wrap gap-2">
-          <h1 className="text-3xl font-bold w-full">Your Courses</h1>
+          <div className="flex justify-between items-center w-full">
+            <h1 className="text-3xl font-bold">Your courses</h1>
+            <Link href="/course/new" className="">
+              <div className=" w-48 h-12 flex justify-center items-center rounded-lg bg-sky-700 text-3xl">
+                <HiPlusCircle />
+              </div>
+            </Link>
+          </div>
           {sections?.map(({ section }) => (
             <SectionCard {...section} submissions={submissions[section.id] ?? []} key={section.id} />
           ))}
