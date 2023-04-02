@@ -1,5 +1,4 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import Sidebar from "Components/Sidebar";
 import { GetServerSidePropsContext, NextPage } from "next";
 import Link from "next/link";
 import { HiPlusCircle } from "react-icons/hi";
@@ -146,7 +145,7 @@ const SectionCard: React.FC<CourseSection["section"] & { submissions: Array<Form
   submissions,
 }) => {
   return (
-    <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-slate-800 shadow w-full">
+    <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-gray-800 shadow w-full">
       <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-4">
         {course.department} {course.number}.{section_number}{" "}
         <Link
@@ -187,8 +186,7 @@ const SectionCard: React.FC<CourseSection["section"] & { submissions: Array<Form
 const CourseListPage: NextPage<CourseListProps> = ({ sections, submissions }) => {
   return (
     <div className="flex">
-      <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
+      <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 w-full">
         <div className="flex justify-between items-center flex-wrap gap-2">
           <div className="flex justify-between items-center w-full">
             <h1 className="text-3xl font-bold">Your courses</h1>

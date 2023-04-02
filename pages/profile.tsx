@@ -1,5 +1,4 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import Sidebar from "Components/Sidebar";
 import { GetServerSideProps, NextPage } from "next";
 import { useState } from "react";
 import withProtected from "util/withProtected";
@@ -56,8 +55,7 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
 
   return (
     <div className="flex">
-      {!isNew && <Sidebar />}
-      <div className={`text-slate-100 px-12 pt-6 flex flex-col gap-4 h-screen ml-auto ${isNew ? "w-full" : "w-10/12"}`}>
+      <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 h-screen ml-auto">
         <h1 className="text-3xl font-bold">{isNew ? "Welcome to OpenGrader!" : `Profile - ${profile.email}`}</h1>
         <form method="POST" action="/api/updateProfile" className="flex flex-col gap-6 overflow-auto px-2">
           <div className="grid md:grid-cols-2 gap-4">
@@ -74,7 +72,7 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
                   required
                   value={givenName}
                   onChange={(e) => setGivenName(e.target.value)}
-                  className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="block w-full rounded-md bg-gray-950 border-gray-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 />
               </div>
             </div>
@@ -91,7 +89,7 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
                   required
                   value={familyName}
                   onChange={(e) => setFamilyName(e.target.value)}
-                  className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="block w-full rounded-md bg-gray-950 border-gray-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 />
               </div>
             </div>
@@ -110,7 +108,7 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
                   minLength={3}
                   value={euid}
                   onChange={(e) => setEuid(e.target.value)}
-                  className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="block w-full rounded-md bg-gray-950 border-gray-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 />
               </div>
             </div>
@@ -127,7 +125,7 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full rounded-md bg-slate-950 border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="block w-full rounded-md bg-gray-950 border-gray-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 />
               </div>
             </div>
@@ -135,7 +133,7 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
           <input type="hidden" value={profile.id} name="id" id="id" />
           <button
             type="submit"
-            className="text-center items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium leading-4 ring-offset-slate-900 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            className="text-center items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium leading-4 ring-offset-gray-900 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
             Update profile
           </button>
         </form>

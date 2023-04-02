@@ -4,7 +4,6 @@ import { HiPlusCircle } from "react-icons/hi";
 import { GetServerSidePropsContext, NextPage } from "next";
 import withProtected from "../../../../util/withProtected";
 import { getCurrentUser, queryParamToNumber } from "../../../../util/misc";
-import Sidebar from "../../../../Components/Sidebar";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/router";
 //warning,all good, late, plagarism
@@ -106,7 +105,7 @@ const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean 
   const router = useRouter();
 
   return (
-    <div className="bg-slate-800 w-full p-3 rounded-md">
+    <div className="bg-gray-800 w-full p-3 rounded-md">
       <div className="flex justify-between">
         <div className="flex flex-col gap-4">
           <div className="">
@@ -125,7 +124,7 @@ const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean 
             </h1>
           )}
         </div>
-        <h1 className="text-slate-400">
+        <h1 className="text-gray-400">
           <Link href={`${router.asPath}/${id}`}>View</Link>
           {isInstructor && (
             <>
@@ -144,8 +143,7 @@ const Assignments: NextPage<AssignmentListProps> = ({ assignments, course, secti
 
   return (
     <div className="flex">
-      <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
+      <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 w-full">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Assignments - {courseName}</h1>
           {isInstructor && (

@@ -42,11 +42,11 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ users, open, setOpen, assig
               leave="ease-in duration-200"
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-slate-900 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-gray-900 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                 <div className="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
                   <button
                     type="button"
-                    className="rounded-md bg-slate-900 text-gray-600 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="rounded-md bg-gray-900 text-gray-600 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     onClick={() => setOpen(false)}>
                     <span className="sr-only">Close</span>
                     <HiX className="h-6 w-6" aria-hidden="true" />
@@ -65,7 +65,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ users, open, setOpen, assig
                       <select
                         value={selectedUid}
                         onChange={(e) => setUid(parseInt(e.target.value))}
-                        className="bg-slate-900">
+                        className="bg-gray-900">
                         <option value={undefined} className="italic">
                           Select a user...
                         </option>
@@ -90,7 +90,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ users, open, setOpen, assig
                   </button>
                   <button
                     type="button"
-                    className="mt-3 inline-flex w-full justify-center rounded-md bg-slate-800 px-3 py-2 text-sm font-semibold text-gray-100 shadow-sm ring-1 ring-inset ring-slate-700 hover:bg-slate-700 sm:mt-0 sm:w-auto"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-gray-100 shadow-sm ring-1 ring-inset ring-gray-700 hover:bg-gray-700 sm:mt-0 sm:w-auto"
                     onClick={() => setOpen(false)}>
                     Cancel
                   </button>

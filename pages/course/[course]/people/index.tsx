@@ -3,7 +3,6 @@ import SubmissionIcon from "Components/SubmissionIcon";
 import { GetServerSidePropsContext, NextPage } from "next";
 import withProtected from "util/withProtected";
 import { getCurrentUser, queryParamToNumber } from "util/misc";
-import Sidebar from "Components/Sidebar";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import AddUserModal from "Components/AddUserModal";
 import { useState } from "react";
@@ -153,7 +152,7 @@ const UserBlock: React.FC<{
 }> = ({ user, isInstructor, openDeleteModal }) => {
   const showStudentDetails = isInstructor && user.membership.some(({ role }) => role === "STUDENT");
   return (
-    <div className="bg-slate-800 w-full p-3 rounded-md">
+    <div className="bg-gray-800 w-full p-3 rounded-md">
       <div className="flex justify-between">
         <div className="flex flex-col gap-4">
           <div className="">
@@ -167,7 +166,7 @@ const UserBlock: React.FC<{
           {showStudentDetails && <h1>Current Grade: {parseFloat(user.grade.toFixed(2))}%</h1>}
         </div>
         {isInstructor && (
-          <h1 className="text-slate-400">
+          <h1 className="text-gray-400">
             View | Edit |{" "}
             <button onClick={() => openDeleteModal(user)} className="text-red-900">
               Delete
@@ -218,7 +217,6 @@ const People: NextPage<StudentsProps> = ({ students, section, isInstructor, allU
 
   return (
     <div className="flex">
-      <Sidebar />
       {isInstructor && (
         <>
           <AddUserModal
@@ -235,7 +233,7 @@ const People: NextPage<StudentsProps> = ({ students, section, isInstructor, allU
           />{" "}
         </>
       )}
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 h-screen w-10/12 ml-auto">
+      <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 h-screen w-full">
         <h1 className="text-3xl font-bold">
           People - {section.course.department} {section.course.number}.{section.section_number}
         </h1>

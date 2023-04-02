@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { Section } from "types";
 
 interface UserState {
   id: number | null;
@@ -8,6 +9,7 @@ interface UserState {
   familyName: string | null;
   role: "STUDENT" | "INSTRUCTOR" | null;
   authId: string | null;
+  courses: Section[] | null;
 }
 
 interface SupaUser {
@@ -25,6 +27,7 @@ const initialState: UserState = {
   familyName: null,
   role: null,
   authId: null,
+  courses: null,
 };
 
 export const userSlice = createSlice({
@@ -42,6 +45,9 @@ export const userSlice = createSlice({
     setRole: (state, { payload: role }: PayloadAction<"STUDENT" | "INSTRUCTOR">) => {
       state.role = role;
     },
+    setCourses: (state, { payload: courses }: PayloadAction<Array<Section>>) => {
+      state.courses = courses;
+    },
     logout: (state) => {
       // reset to initial state
       Object.entries(initialState).forEach(([key, value]) => {
@@ -51,6 +57,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { loadUser, logout, setRole } = userSlice.actions;
+export const { loadUser, logout, setRole, setCourses } = userSlice.actions;
 
 export default userSlice.reducer;
