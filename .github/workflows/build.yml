@@ -26,3 +26,10 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PRIVATE_SUPABASE_KEY: ${{ secrets.NEXT_PRIVATE_SUPABASE_KEY }}
+      - name: Check style
+        uses: creyD/prettier_action@v4.2
+        with:
+          # This part is also where you can pass other options, for example:
+          prettier_options: --check **/*.{ts,tsx}
+          dry: true
+          only_changed: true
