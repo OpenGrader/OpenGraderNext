@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { Assignment } from "types";
 
 import { MouseEvent } from "react";
+import Button from "Components/Button";
 
 interface CreateAssignmentProps {
   courseId: number;
@@ -105,29 +106,6 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
   const handleClick = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
     fileUpload();
-    // let formData = new FormData();
-
-    // formData.append("inputFile", inputFile || "");
-    // formData.append("outputFile", outputFile || "");
-    // formData.append("title", title || "Untitled Assignment");
-    // formData.append("desc", desc || "");
-    // formData.append("lang", lang);
-    // formData.append("courseID", courseId.toString());
-
-    // await fetch("/api/createAssignment", {
-    //   method: "POST",
-    //   body: formData,
-    //   headers: {
-    //     "Content-Type": "multipart/form-data",
-    //   },
-    // })
-    //   .then((response) => {
-    //     router.push(`/course/${courseId}/assignment`);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     router.push(`/course/${courseId}/assignment`);
-    //   });
   };
 
   return (
@@ -188,7 +166,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
             <h1 className="text-sm font-medium text-gray-300 pb-2">Input definition</h1>
             <label
               htmlFor="input-def"
-              className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+              className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-800/25 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-700/25 transition">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg aria-hidden="true" fill="none" stroke="currentColor" className="w-12 h-12 mx-auto text-gray-600">
                   <path
@@ -224,7 +202,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
             <h1 className="text-sm font-medium text-gray-300 pb-2">Output definition</h1>
             <label
               htmlFor="output-def"
-              className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+              className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-800/25 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-700/25 transition">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg aria-hidden="true" fill="none" stroke="currentColor" className="w-12 h-12 mx-auto text-gray-600">
                   <path
@@ -257,12 +235,13 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
           </div>
 
           <input type="hidden" value={courseId} name="section" id="section" />
-          <button
+          <Button
             type="button"
-            onClick={(e) => handleClick(e)}
-            className="text-center items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium leading-4 ring-offset-gray-900 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            className="whitespace-nowrap w-min ml-auto mt-2"
+            size="lg"
+            onClick={(e: MouseEvent<HTMLButtonElement>) => handleClick(e)}>
             Create
-          </button>
+          </Button>
         </form>
       </div>
     </div>
