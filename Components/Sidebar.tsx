@@ -17,6 +17,8 @@ import OpenGraderLogo from "./OpenGraderLogo";
 import { useAppDispatch, useAppSelector } from "hooks";
 import { loadUser, setCourses, setRole } from "store/userSlice";
 import { Section } from "types";
+import { setCurrentPage } from "store/pageStateSlice";
+import { IconType } from "react-icons";
 
 interface SidebarProps {
   children: React.ReactNode | React.ReactNode[];
@@ -34,116 +36,26 @@ type SupaMembership = {
   };
 };
 
-// const classNames = (...classes: string[]): string => classes.filter(Boolean).join(" ");
+interface NavigationLink {
+  name: string;
+  href: (id: string) => string;
+  icon: IconType;
+  requireCourse: boolean;
+  isCurrent: boolean;
+}
 
-// const SideBarLinks = () => {
-//   const router = useRouter();
-
-//   const routes = [
-//     { text: "Courses", link: "", icon: HiOutlineAcademicCap },
-//     { text: "Assignments", link: ":course/assignment", icon: HiOutlineClipboard },
-//     { text: "People", link: ":course/people", icon: HiOutlineUsers },
-//     { text: "Reports", link: ":course/report", icon: HiOutlineChartBar },
-//   ];
-
-//   const splitPath = router.asPath.split("/");
-//   let courseId = "-1";
-//   if (splitPath.length >= 3) {
-//     courseId = splitPath[2];
-//   } else {
-//     routes.splice(1, routes.length - 1);
-//   }
-
-//   return (
-//     <nav className="mt-5 flex-1 space-y-1 bg-gray-800 px-2" aria-label="Sidebar">
-//       {routes.map((item) => {
-//         const link = "/course/" + item.link.replace(":course", courseId);
-//         const isCurrent = router.asPath.toString().replaceAll("/", "") === link.replaceAll("/", "");
-
-//         return (
-//           <Link
-//             key={item.text}
-//             href={link}
-//             className={classNames(
-//               isCurrent ? "bg-gray-950 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white",
-//               "group flex items-center rounded-md px-2 py-2 text-sm font-medium",
-//             )}
-//           >
-//             <item.icon
-//               className={classNames(
-//                 isCurrent ? "text-gray-300" : "text-gray-400 group-hover:text-gray-300",
-//                 "mr-3 h-6 w-6 flex-shrink-0",
-//               )}
-//               aria-hidden="true"
-//             />
-//             <span className="flex-1">{item.text}</span>
-//           </Link>
-//         );
-//       })}
-//     </nav>
-//   );
-// };
-
-// const Sidebar = () => {
-//   const supabase = useSupabaseClient();
-//   const dispatch = useAppDispatch();
-//   const user = useAppSelector((store) => store.user);
-
-//   useEffect(() => {
-//     getCurrentUser(supabase).then((user) => {
-//       if (user) dispatch(loadUser(user));
-//     });
-
-//     supabase.auth.getUser().then(({ data }) => {
-//       const userId = data.user?.id;
-//       supabase
-//         .rpc("is_instructor", { uid: userId })
-//         .single()
-//         .then(({ data: isInstructor }) => {
-//           dispatch(setRole(isInstructor ? "INSTRUCTOR" : "STUDENT"));
-//         });
-//     });
-//   }, []);
-
-//   return (
-//     <div className="sticky relative top-0 h-screen flex-1 flex-col bg-gray-800">
-//       <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
-//         <div className="flex flex-shrink-0 items-center px-4 -mt-4">
-//           <OpenGraderLogo />
-//         </div>
-//         <SideBarLinks />
-//       </div>
-//       <div className="absolute bottom-0 w-full flex flex-shrink-0 bg-gray-700 p-4">
-//         <UserMenu name={user.name ?? "Loading..."} position={user.role ?? "Loading..."} />
-//       </div>
-//     </div>
-//   );
-// };
-// export default Sidebar;
-
-const navigation = [
-  { name: "Courses", href: "/course", icon: HiOutlineAcademicCap, requireCourse: false, isCurrent: false },
-  {
-    name: "Assignments",
-    href: "/course/:course/assignment",
-    icon: HiOutlineClipboard,
-    requireCourse: true,
-    isCurrent: false,
-  },
-  { name: "People", href: "/course/:course/people", icon: HiOutlineUsers, requireCourse: true, isCurrent: false },
-  { name: "Reports", href: "/course/:course/report", icon: HiOutlineChartBar, requireCourse: true, isCurrent: false },
-];
-
-const filterDisallowedRoutes = (requireCourse: boolean, courseId: string): boolean =>
-  !requireCourse || courseId !== "-1";
-
-const hydrateRoute = (routePath: string, courseId: string): string => {
-  console.log(`Replacing :course with ${courseId} in path ${routePath}`);
-  return routePath.replace(/:course/g, courseId);
-};
+const filterDisallowedRoutes = (requireCourse: boolean, courseId: string | null): boolean =>
+  !requireCourse || (courseId ?? "-1") !== "-1";
 
 const classNames = (...classes: string[]): string => {
   return classes.filter(Boolean).join(" ");
+};
+
+const isActiveRoute = (link: NavigationLink, courseId: string | null, currentPath: string) => {
+  const exp = /^\/?(.*)\/?$/;
+  const strippedPath = currentPath.replace(exp, "$1");
+  const hydratedLink = link.href(courseId ?? "-1").replace(exp, "$1");
+  return strippedPath === hydratedLink;
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
@@ -152,18 +64,37 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const supabase = useSupabaseClient();
   const dispatch = useAppDispatch();
   const user = useAppSelector((store) => store.user);
+  const pageTitle = useAppSelector((store) => store.page.name);
+  const courseId = useAppSelector((store) => store.page.courseId);
+  const [userHasLoaded, setUserLoaded] = useState(false);
+
+  const navigation: NavigationLink[] = [
+    { name: "Courses", href: () => "/course", icon: HiOutlineAcademicCap, requireCourse: false, isCurrent: false },
+    {
+      name: "Assignments",
+      href: (id: string) => `/course/${id}/assignment`,
+      icon: HiOutlineClipboard,
+      requireCourse: true,
+      isCurrent: false,
+    },
+    {
+      name: "People",
+      href: (id) => `/course/${id}/people`,
+      icon: HiOutlineUsers,
+      requireCourse: true,
+      isCurrent: false,
+    },
+    {
+      name: "Reports",
+      href: (id) => `/course/${id}/report`,
+      icon: HiOutlineChartBar,
+      requireCourse: true,
+      isCurrent: false,
+    },
+  ];
 
   const router = useRouter();
-  const currentPath = router.asPath.toString().replaceAll("/", "");
-
-  const splitPath = router.asPath.split("/");
-  let courseId = "-1";
-  if (splitPath.length >= 3) {
-    courseId = splitPath[2];
-  }
-
-  const [hydratedNavigation, setHydratedNavigation] = useState(navigation);
-  const currentRoute = hydratedNavigation.find((n) => n.href.replace(/\//g, "") === currentPath);
+  const currentPath = router.asPath;
 
   const courses =
     user.courses?.map((course) => ({
@@ -183,38 +114,16 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     // load user into the store
     getCurrentUser(supabase)
       .then((u) => {
-        if (u) dispatch(loadUser(u));
+        if (u) {
+          dispatch(loadUser(u));
+          supabase
+            .rpc("is_instructor", { uid: u.auth_id })
+            .single()
+            .then(({ data: isInstructor }) => dispatch(setRole(isInstructor ? "INSTRUCTOR" : "STUDENT")));
+        }
       })
-      .catch(() => {});
-
-    supabase.auth.getUser().then(({ data }) => {
-      const userId = data.user?.id;
-      supabase
-        .rpc("is_instructor", { uid: userId })
-        .single()
-        .then(({ data: isInstructor }) => {
-          dispatch(setRole(isInstructor ? "INSTRUCTOR" : "STUDENT"));
-        });
-    });
-
-    // hydrate navigation - this confuses SSR so need to do it as an effect
-    setHydratedNavigation((nav) =>
-      nav.map((route) => ({
-        ...route,
-        href: hydrateRoute(route.href, courseId),
-        isCurrent: hydrateRoute(route.href, courseId).replaceAll("/", "") === currentPath,
-      })),
-    );
-
-    hydratedNavigation.forEach((route) => {
-      console.log({
-        route,
-        isCurrent: hydrateRoute(route.href, courseId).replaceAll("/", "") === currentPath,
-        hrf: hydrateRoute(route.href, courseId).replaceAll("/", ""),
-        currentPath,
-        courseId,
-      });
-    });
+      .catch(() => {})
+      .finally(() => setUserLoaded(true));
   }, []);
 
   useEffect(() => {
@@ -244,13 +153,56 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
           dispatch(setCourses(courses));
         }
       });
-  }, [user]);
+  }, [user.id]);
 
-  if (!user.id) return children;
+  // when path changes, load updated page metadata into redux
+  useEffect(() => {
+    const path = router.asPath.split("/");
+
+    if (path.length > 1 && path[1] === "course") {
+      if (path.length > 2) {
+        const courseId = path[2];
+        supabase
+          .from("section")
+          .select("section_number, course ( department, number )")
+          .eq("id", courseId)
+          .single()
+          .then(({ data: c }) => {
+            if (c) {
+              const cc = c as unknown as Section;
+              dispatch(
+                setCurrentPage({
+                  name: `${cc.course.department} ${cc.course.number}.${cc.section_number}`,
+                  courseId,
+                }),
+              );
+            }
+          });
+      } else {
+        dispatch(
+          setCurrentPage({
+            name: "Courses",
+            courseId: null,
+          }),
+        );
+      }
+    } else {
+      dispatch(
+        setCurrentPage({
+          name: "OpenGrader",
+          courseId: null,
+        }),
+      );
+    }
+  }, [router.asPath]);
+
+  // no sidebar if not signed in
+  if ((!user.id && userHasLoaded) || router.asPath === "/auth") return <>{children}</>;
 
   return (
     <>
       <div>
+        {/* Mobile navigation slideout */}
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
             <Transition.Child
@@ -298,14 +250,14 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
                           <ul role="list" className="-mx-2 space-y-1">
-                            {hydratedNavigation
+                            {navigation
                               .filter((n) => filterDisallowedRoutes(n.requireCourse, courseId))
                               .map((item) => (
                                 <li key={item.name}>
                                   <Link
-                                    href={item.href}
+                                    href={item.href(courseId ?? "-1")}
                                     className={classNames(
-                                      item.isCurrent
+                                      isActiveRoute(item, courseId, currentPath)
                                         ? "bg-gray-800 text-white"
                                         : "text-gray-400 hover:text-white hover:bg-gray-800",
                                       "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all",
@@ -359,14 +311,14 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
-                    {hydratedNavigation
+                    {navigation
                       .filter((n) => filterDisallowedRoutes(n.requireCourse, courseId))
                       .map((item) => (
                         <li key={item.name}>
                           <Link
-                            href={item.href}
+                            href={item.href(courseId ?? "-1")}
                             className={classNames(
-                              item.isCurrent
+                              isActiveRoute(item, courseId, currentPath)
                                 ? "bg-gray-800 text-white"
                                 : "text-gray-400 hover:text-white hover:bg-gray-800",
                               "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all",
@@ -413,7 +365,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             <span className="sr-only">Open sidebar</span>
             <HiOutlineMenu className="h-6 w-6" aria-hidden="true" />
           </button>
-          <div className="flex-1 text-sm font-semibold leading-6 text-white">{currentRoute?.name ?? "OpenGrader"}</div>
+          <div className="flex-1 text-sm font-semibold leading-6 text-white">{pageTitle}</div>
           <UserMenu name={user.name ?? "Loading..."} position={user.role ?? "Loading..."} />
         </div>
 

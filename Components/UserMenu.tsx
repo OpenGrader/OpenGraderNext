@@ -20,7 +20,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ name, position }) => {
   return (
     <Menu
       as="div"
-      className="relative w-[calc(100% + 3rem)] hover:bg-gray-900 -mx-6 lg:py-2 lg:px-4 rounded-full lg:rounded-none ring-white ring-offset-gray-900 ring-offset-1 active:ring-1 lg:active:ring-0">
+      className="relative w-[calc(100% + 3rem)] hover:bg-gray-900 -mx-6 lg:py-4 lg:px-4 rounded-full lg:rounded-none ring-white ring-offset-gray-900 ring-offset-1 active:ring-1 lg:active:ring-0">
       <Menu.Button className="relative flex text-sm focus:outline-none w-full">
         <div className="flex items-center">
           <div className="h-8 w-8 p-1.5 rounded-full border border-gray-200/75">
@@ -40,9 +40,9 @@ const UserMenu: React.FC<UserMenuProps> = ({ name, position }) => {
         leave="transition ease-in duration-75"
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95">
-        <Menu.Items className="absolute right-0 lg:right-auto lg:left-0 top-8 lg:top-auto lg:bottom-0 mb-10 z-10 mt-2 w-48 origin-bottom-right rounded-md bg-black py-1 shadow-lg ring-1 ring-white ring-opacity-5 focus:outline-none">
+        <Menu.Items className="absolute right-0 lg:right-auto lg:left-0 top-8 lg:top-auto lg:bottom-4 mb-10 z-10 mt-2 w-48 origin-bottom-right rounded-md bg-black py-1 shadow-lg ring-1 ring-white ring-opacity-5 focus:outline-none">
           <Menu.Item>
-            <span className="text-sm text-gray-400 text-center block px-4 py-2 select-none">{name}</span>
+            <span className="text-sm text-gray-400 text-center block lg:hidden px-4 py-2 select-none">{name}</span>
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (

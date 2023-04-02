@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { HiUserRemove, HiX } from "react-icons/hi";
 import { User } from "types";
+import Button from "./Button";
 
 interface RemoveUserModalProps {
   user?: User;
@@ -27,7 +28,7 @@ const RemoveUserModal: React.FC<RemoveUserModalProps> = ({ user, open, setOpen, 
           leave="ease-in duration-200"
           leaveFrom="opacity-100"
           leaveTo="opacity-0">
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-gray-800/75 backdrop-blur-sm transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -52,7 +53,7 @@ const RemoveUserModal: React.FC<RemoveUserModalProps> = ({ user, open, setOpen, 
                 </div>
                 <div className="sm:flex sm:items-start">
                   <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-800 sm:mx-0 sm:h-10 sm:w-10">
-                    <HiUserRemove className="h-6 w-6 text-red-400" aria-hidden="true" />
+                    <HiUserRemove className="h-6 w-6 text-red-200" aria-hidden="true" />
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-100">
@@ -69,19 +70,13 @@ const RemoveUserModal: React.FC<RemoveUserModalProps> = ({ user, open, setOpen, 
                     </div>
                   </div>
                 </div>
-                <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto bg-red-600 hover:bg-red-500"
-                    onClick={() => saveAndClose()}>
+                <div className="mt-5 sm:mt-4 sm:flex gap-4 sm:flex-row-reverse">
+                  <Button type="button" variant="danger" onClick={() => saveAndClose()}>
                     Remove user
-                  </button>
-                  <button
-                    type="button"
-                    className="mt-3 inline-flex w-full justify-center rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-gray-100 shadow-sm ring-1 ring-inset ring-gray-700 hover:bg-gray-700 sm:mt-0 sm:w-auto"
-                    onClick={() => setOpen(false)}>
+                  </Button>
+                  <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

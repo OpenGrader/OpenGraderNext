@@ -7,9 +7,15 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import AddUserModal from "Components/AddUserModal";
 import { useState } from "react";
 import RemoveUserModal from "Components/RemoveUserModal";
+import Button from "Components/Button";
+import { HiEye, HiPencil, HiPlus, HiX } from "react-icons/hi";
+import PanelLink from "Components/PanelLink";
+import { useRouter } from "next/router";
+import EditUserRoleModal from "Components/EditUserRoleModal";
 
+type UserWithMembership = User & { membership: { id: number; role: "STUDENT" | "INSTRUCTOR" }[] };
 interface StudentsProps {
-  students: (User & { membership: { id: number; role: "STUDENT" | "INSTRUCTOR" }[] })[];
+  students: UserWithMembership[];
   section: {
     id: number;
     course: {
@@ -104,9 +110,10 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
         });
       });
 
-    const { data: allUsers } = await supabase
+    const allUsers = await supabase
       .from("user")
-      .select("id, given_name, family_name, euid, membership ( section )");
+      .select("id, given_name, family_name, euid, membership ( section )")
+      .then(({ data: users }) => users?.map((u) => ({ ...u, name: `${u.given_name} ${u.family_name}` })));
 
     console.log({ course });
 
@@ -149,40 +156,62 @@ const UserBlock: React.FC<{
   user: User & { membership: { id: number; role: "STUDENT" | "INSTRUCTOR" }[] };
   isInstructor: boolean;
   openDeleteModal: (u: User) => void;
-}> = ({ user, isInstructor, openDeleteModal }) => {
+  openEditModal: (u: UserWithMembership) => void;
+}> = ({ user, isInstructor, openDeleteModal, openEditModal }) => {
   const showStudentDetails = isInstructor && user.membership.some(({ role }) => role === "STUDENT");
+
+  const router = useRouter();
+
+  const hasName = user.name !== " ";
+
   return (
-    <div className="bg-gray-800 w-full p-3 rounded-md">
-      <div className="flex justify-between">
-        <div className="flex flex-col gap-4">
-          <div className="">
-            <div className="text-xl flex gap-2 items-center">
-              <p className="text-xl font-bold">{user.name}</p>
-              {user.euid && <p className="">({user.euid})</p>}
-              {showStudentDetails && <Warnings Alerts={user.alerts} />}
+    <div className="bg-gray-800/25 border border-gray-400 w-full p-3 rounded-md">
+      <div className="flex justify-between flex-wrap-reverse">
+        <div>
+          <div className="flex flex-col gap-4">
+            <div className="">
+              <div className="text-xl flex gap-2 items-center">
+                <h3 className="text-xl font-bold">{hasName ? user.name : user.euid}</h3>
+                <div>{showStudentDetails && <Warnings Alerts={user.alerts} />}</div>
+              </div>
+              {hasName && <p className="text-sm font-mono">{user.euid}</p>}
             </div>
-            {showStudentDetails && <p>{user.submissionCount} submissions</p>}
           </div>
-          {showStudentDetails && <h1>Current Grade: {parseFloat(user.grade.toFixed(2))}%</h1>}
+          {showStudentDetails && <p className="mt-2 text-sm">{user.submissionCount} submissions</p>}
+          {showStudentDetails && <p className="mt-2 text-sm">Current Grade: {parseFloat(user.grade.toFixed(2))}%</p>}
         </div>
-        {isInstructor && (
-          <h1 className="text-gray-400">
-            View | Edit |{" "}
-            <button onClick={() => openDeleteModal(user)} className="text-red-900">
-              Delete
-            </button>
-          </h1>
-        )}
+        <div className="text-gray-400 mb-2 w-full sm:w-auto">
+          <ul className="flex rounded-md border border-gray-400 shadow-xl w-min mx-auto">
+            <PanelLink title="View" position={isInstructor ? "first" : "only"} href={`${router.asPath}/${user.id}`}>
+              <HiEye />
+            </PanelLink>
+
+            {isInstructor && (
+              <>
+                <PanelLink title="Edit" position="other" onClick={() => openEditModal(user)}>
+                  <HiPencil />
+                </PanelLink>
+                <PanelLink title="Delete" position="last" onClick={() => openDeleteModal(user)}>
+                  <HiX className="text-red-500" />
+                </PanelLink>
+              </>
+            )}
+          </ul>
+        </div>
       </div>
     </div>
   );
 };
 
-const People: NextPage<StudentsProps> = ({ students, section, isInstructor, allUsers }) => {
-  console.log(students);
+const People: NextPage<StudentsProps> = ({ students: people, section, isInstructor, allUsers }) => {
+  console.log(people);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [removeModalOpen, setRemoveModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [userToRemove, setUserToRemove] = useState<User>();
+  const [userToEdit, setUserToEdit] = useState<UserWithMembership>();
+
+  const router = useRouter();
 
   const createUserAssignment = async (userId: number) => {
     await fetch(`/api/assignStudent`, {
@@ -194,6 +223,10 @@ const People: NextPage<StudentsProps> = ({ students, section, isInstructor, allU
       headers: {
         "Content-Type": "application/json",
       },
+    }).then((r) => {
+      if (r.ok) {
+        router.replace(router.asPath); // reload server side props to update page state
+      }
     });
   };
 
@@ -207,6 +240,29 @@ const People: NextPage<StudentsProps> = ({ students, section, isInstructor, allU
       headers: {
         "Content-Type": "application/json",
       },
+    }).then((r) => {
+      if (r.ok) {
+        router.replace(router.asPath);
+      }
+    });
+  };
+
+  const updateUserRole = async (user: User, role: "STUDENT" | "INSTRUCTOR") => {
+    console.log(`Updating user role! User: ${user.euid}, role: ${role}`);
+    await fetch("/api/updateUserRole", {
+      method: "POST",
+      body: JSON.stringify({
+        sectionId: section.id,
+        userId: user.id,
+        role,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((r) => {
+      if (r.ok) {
+        router.replace(router.asPath);
+      }
     });
   };
 
@@ -215,8 +271,13 @@ const People: NextPage<StudentsProps> = ({ students, section, isInstructor, allU
     setRemoveModalOpen(true);
   };
 
+  const openEditModal = (user: UserWithMembership) => {
+    setUserToEdit(user);
+    setEditModalOpen(true);
+  };
+
   return (
-    <div className="flex">
+    <div className="flex mb-24">
       {isInstructor && (
         <>
           <AddUserModal
@@ -230,34 +291,55 @@ const People: NextPage<StudentsProps> = ({ students, section, isInstructor, allU
             open={removeModalOpen}
             setOpen={setRemoveModalOpen}
             removeUser={removeUser}
-          />{" "}
+          />
+          <EditUserRoleModal
+            user={userToEdit}
+            open={editModalOpen}
+            role={userToEdit?.membership.some(({ role }) => role === "INSTRUCTOR") ? "INSTRUCTOR" : "STUDENT"}
+            setOpen={setEditModalOpen}
+            updateRole={updateUserRole}
+          />
         </>
       )}
       <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 h-screen w-full">
         <h1 className="text-3xl font-bold">
           People - {section.course.department} {section.course.number}.{section.section_number}
         </h1>
-        <button
-          onClick={() => setAddModalOpen(true)}
-          className="inline-flex whitespace-nowrap w-min items-center rounded border border-transparent bg-cyan-700 px-2.5 py-1 text-sm font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
-          Add new
-        </button>
+        {isInstructor && (
+          <Button onClick={() => setAddModalOpen(true)} className="flex-shrink-0 w-min whitespace-nowrap">
+            <HiPlus /> Add new
+          </Button>
+        )}
         <h2 className="mt-6 text-xl font-semibold">Instructors</h2>
-        {students
-          .filter(({ membership }) => membership.some(({ role }) => role === "INSTRUCTOR"))
-          .map((instructor, index) => {
-            return (
-              <UserBlock user={instructor} isInstructor={isInstructor} key={index} openDeleteModal={openDeleteModal} />
-            );
-          })}
+        <div className="grid md:grid-cols-2 gap-6">
+          {people
+            .filter(({ membership }) => membership.some(({ role }) => role === "INSTRUCTOR"))
+            .map((instructor, index) => {
+              return (
+                <UserBlock
+                  user={instructor}
+                  isInstructor={isInstructor}
+                  key={index}
+                  openDeleteModal={openDeleteModal}
+                  openEditModal={openEditModal}
+                />
+              );
+            })}
+        </div>
         <h2 className="mt-6 text-xl font-semibold">Students</h2>
 
-        <div className="flex flex-col gap-6 overflow-auto">
-          {students
+        <div className="grid md:grid-cols-2 gap-6 pb-16">
+          {people
             .filter(({ membership }) => membership.some(({ role }) => role === "STUDENT"))
             .map((student, index) => {
               return (
-                <UserBlock user={student} isInstructor={isInstructor} key={index} openDeleteModal={openDeleteModal} />
+                <UserBlock
+                  user={student}
+                  isInstructor={isInstructor}
+                  key={index}
+                  openDeleteModal={openDeleteModal}
+                  openEditModal={openEditModal}
+                />
               );
             })}
         </div>

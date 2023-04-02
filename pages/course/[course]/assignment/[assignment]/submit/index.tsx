@@ -11,6 +11,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "hooks";
 import { useRouter } from "next/router";
+import Button from "Components/Button";
 
 type AssignmentT = Assignment & { submission: StudentSubmission[] };
 

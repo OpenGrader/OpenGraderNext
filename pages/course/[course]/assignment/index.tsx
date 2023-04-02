@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { Assignment } from "../../../../types";
-import { HiEye, HiPencil, HiPlusCircle, HiX } from "react-icons/hi";
+import { HiEye, HiPencil, HiPlus, HiPlusCircle, HiX } from "react-icons/hi";
 import { GetServerSidePropsContext, NextPage } from "next";
 import withProtected from "../../../../util/withProtected";
 import { getCurrentUser, queryParamToNumber } from "../../../../util/misc";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/router";
+import Button from "Components/Button";
+import PanelLink from "Components/PanelLink";
 //warning,all good, late, plagarism
 
 interface AssignmentListProps {
@@ -100,40 +102,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
     };
   });
 
-interface AssignmentBlockLinkProps {
-  title: string;
-  href: string;
-  position: "first" | "last" | "only" | "other";
-  children: React.ReactNode;
-}
-
-const classNames = (...classes: (string | undefined | boolean)[]) => classes.filter(Boolean).join(" ");
-
-const AssignmentBlockLink: React.FC<AssignmentBlockLinkProps> = ({ title, href, position, children }) => {
-  const roundingRules: Map<typeof position, string> = new Map([
-    ["first", "rounded-l-md"],
-    ["last", "rounded-r-md"],
-    ["only", "rounded-md"],
-    ["other", ""],
-  ]);
-
-  return (
-    <li>
-      <Link
-        href={href}
-        title={title}
-        className={classNames(
-          "rounded-l-md border-gray-400 text-gray-300 p-1 h-8 w-9 flex items-center justify-center hover:bg-gray-800 transition-all",
-          roundingRules.get(position),
-          // all should have right border except last and only items to prevent double border weight
-          ["first", "other"].includes(position) && "border-r",
-        )}>
-        {children}
-      </Link>
-    </li>
-  );
-};
-
 const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean }> = ({ assignment, isInstructor }) => {
   const { title, submissionCount, warnings, id } = assignment;
   const router = useRouter();
@@ -162,21 +130,18 @@ const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean 
         </div>
         <h1 className="text-gray-400 mb-2 w-full sm:w-auto">
           <ul className="flex rounded-md border border-gray-400 shadow-xl w-min mx-auto">
-            <AssignmentBlockLink
-              title="View"
-              position={isInstructor ? "first" : "only"}
-              href={`${router.asPath}/${id}`}>
+            <PanelLink title="View" position={isInstructor ? "first" : "only"} href={`${router.asPath}/${id}`}>
               <HiEye />
-            </AssignmentBlockLink>
+            </PanelLink>
 
             {isInstructor && (
               <>
-                <AssignmentBlockLink title="Edit" position="other" href={`${router.asPath}/${id}/edit`}>
+                <PanelLink title="Edit" position="other" href={`${router.asPath}/${id}/edit`}>
                   <HiPencil />
-                </AssignmentBlockLink>
-                <AssignmentBlockLink title="Delete" position="last" href={`${router.asPath}/${id}/delete`}>
+                </PanelLink>
+                <PanelLink title="Delete" position="last" href={`${router.asPath}/${id}/delete`}>
                   <HiX className="text-red-500" />
-                </AssignmentBlockLink>
+                </PanelLink>
               </>
             )}
           </ul>
@@ -192,17 +157,15 @@ const Assignments: NextPage<AssignmentListProps> = ({ assignments, course, secti
   return (
     <div className="flex">
       <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 w-full">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
           <h1 className="text-3xl font-bold">Assignments - {courseName}</h1>
           {isInstructor && (
-            <Link href={`/course/${course.id}/assignment/new`} className="">
-              <div className=" w-48 h-12 flex justify-center items-center rounded-lg bg-sky-700 text-3xl">
-                <HiPlusCircle />
-              </div>
-            </Link>
+            <Button href={`/course/${course.id}/assignment/new`}>
+              <HiPlus /> New assignment
+            </Button>
           )}
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="grid xl:grid-cols-2 gap-6">
           {assignments.map((assignment, index) => {
             return <AssignmentBlock assignment={assignment} isInstructor={isInstructor} key={index} />;
           })}

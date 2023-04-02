@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import Button from "Components/Button";
 import { GetServerSideProps, NextPage } from "next";
 import { useState } from "react";
 import withProtected from "util/withProtected";
@@ -55,7 +56,7 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
 
   return (
     <div className="flex">
-      <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 h-screen ml-auto">
+      <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 h-screen ml-auto w-full">
         <h1 className="text-3xl font-bold">{isNew ? "Welcome to OpenGrader!" : `Profile - ${profile.email}`}</h1>
         <form method="POST" action="/api/updateProfile" className="flex flex-col gap-6 overflow-auto px-2">
           <div className="grid md:grid-cols-2 gap-4">
@@ -131,11 +132,11 @@ export const ProfilePage: NextPage<ProfilePageProps> = ({ isNew, profile }) => {
             </div>
           </div>
           <input type="hidden" value={profile.id} name="id" id="id" />
-          <button
-            type="submit"
-            className="text-center items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium leading-4 ring-offset-gray-900 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-            Update profile
-          </button>
+          <div className="w-min ml-auto">
+            <Button type="submit" className="whitespace-nowrap">
+              Update profile
+            </Button>
+          </div>
         </form>
       </div>
     </div>
