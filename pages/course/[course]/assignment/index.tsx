@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Assignment } from "../../../../types";
-import { HiPlusCircle } from "react-icons/hi";
+import { HiEye, HiPencil, HiPlusCircle, HiX } from "react-icons/hi";
 import { GetServerSidePropsContext, NextPage } from "next";
 import withProtected from "../../../../util/withProtected";
 import { getCurrentUser, queryParamToNumber } from "../../../../util/misc";
@@ -100,17 +100,53 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
     };
   });
 
+interface AssignmentBlockLinkProps {
+  title: string;
+  href: string;
+  position: "first" | "last" | "only" | "other";
+  children: React.ReactNode;
+}
+
+const classNames = (...classes: (string | undefined | boolean)[]) => classes.filter(Boolean).join(" ");
+
+const AssignmentBlockLink: React.FC<AssignmentBlockLinkProps> = ({ title, href, position, children }) => {
+  const roundingRules: Map<typeof position, string> = new Map([
+    ["first", "rounded-l-md"],
+    ["last", "rounded-r-md"],
+    ["only", "rounded-md"],
+    ["other", ""],
+  ]);
+
+  return (
+    <li>
+      <Link
+        href={href}
+        title={title}
+        className={classNames(
+          "rounded-l-md border-gray-400 text-gray-300 p-1 h-8 w-9 flex items-center justify-center hover:bg-gray-800 transition-all",
+          roundingRules.get(position),
+          // all should have right border except last and only items to prevent double border weight
+          ["first", "other"].includes(position) && "border-r",
+        )}>
+        {children}
+      </Link>
+    </li>
+  );
+};
+
 const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean }> = ({ assignment, isInstructor }) => {
   const { title, submissionCount, warnings, id } = assignment;
   const router = useRouter();
 
   return (
-    <div className="bg-gray-800 w-full p-3 rounded-md">
+    <div className="bg-gray-800/25 border border-gray-400 w-full p-3 rounded-md">
       <div className="flex justify-between">
         <div className="flex flex-col gap-4">
           <div className="">
             <div className="text-xl flex gap-2 items-center">
-              <p className="text-xl font-bold">{title}</p>
+              <Link href={`${router.asPath}/${id}`} className="text-xl font-bold hover:underline">
+                {title}
+              </Link>
             </div>
             <p>
               {submissionCount} submission{submissionCount === 1 ? "" : "s"}
@@ -125,13 +161,25 @@ const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean 
           )}
         </div>
         <h1 className="text-gray-400">
-          <Link href={`${router.asPath}/${id}`}>View</Link>
-          {isInstructor && (
-            <>
-              {" "}
-              | Edit | <span className="text-red-900">Delete</span>
-            </>
-          )}
+          <ul className="flex rounded-md border border-gray-400 shadow-xl">
+            <AssignmentBlockLink
+              title="View"
+              position={isInstructor ? "first" : "only"}
+              href={`${router.asPath}/${id}`}>
+              <HiEye />
+            </AssignmentBlockLink>
+
+            {isInstructor && (
+              <>
+                <AssignmentBlockLink title="Edit" position="other" href={`${router.asPath}/${id}/edit`}>
+                  <HiPencil />
+                </AssignmentBlockLink>
+                <AssignmentBlockLink title="Delete" position="last" href={`${router.asPath}/${id}/delete`}>
+                  <HiX className="text-red-500" />
+                </AssignmentBlockLink>
+              </>
+            )}
+          </ul>
         </h1>
       </div>
     </div>
