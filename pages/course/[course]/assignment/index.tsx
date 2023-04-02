@@ -140,7 +140,7 @@ const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean 
 
   return (
     <div className="bg-gray-800/25 border border-gray-400 w-full p-3 rounded-md">
-      <div className="flex justify-between">
+      <div className="flex justify-between flex-wrap-reverse">
         <div className="flex flex-col gap-4">
           <div className="">
             <div className="text-xl flex gap-2 items-center">
@@ -160,8 +160,8 @@ const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean 
             </h1>
           )}
         </div>
-        <h1 className="text-gray-400">
-          <ul className="flex rounded-md border border-gray-400 shadow-xl">
+        <h1 className="text-gray-400 mb-2 w-full sm:w-auto">
+          <ul className="flex rounded-md border border-gray-400 shadow-xl w-min mx-auto">
             <AssignmentBlockLink
               title="View"
               position={isInstructor ? "first" : "only"}
