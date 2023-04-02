@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
-import OpenGraderLogo from "Components/OpenGraderLogo";
+import OpenGraderLogo from 'Components/OpenGraderLogo';
 
-const AuthPage: NextPage = () => {
+const AuthPage:NextPage = () => {
   const supabase = useSupabaseClient();
   const session = useSession();
   const router = useRouter();
@@ -16,7 +16,7 @@ const AuthPage: NextPage = () => {
     }
   }, [session?.user]);
 
-  return (
+return (
     <div className="h-screen flex justify-center items-center container mx-auto text-slate-100">
       <div className="w-full h-screen md:h-auto flex content-center flex-wrap md:w-auto md:min-w-[300px] md:border border-gray-500 text-gray-300 shadow-md py-2 px-8 rounded-md bg-gray-900">
         <OpenGraderLogo />
