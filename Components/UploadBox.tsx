@@ -9,13 +9,13 @@ const Upload = ({
   courseID,
   assignmentID,
   userID,
-  fileType
+  fileType,
 }: {
   bucket: string;
   courseID: number;
   assignmentID: number;
   userID: number | undefined;
-  fileType?:string;
+  fileType?: string;
 }) => {
   const routers = useRouter();
   const [file, setFile] = useState<File | undefined>();
@@ -41,7 +41,6 @@ const Upload = ({
       },
     ]);
   };
-  
 
   const handleClick = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
@@ -75,7 +74,7 @@ const Upload = ({
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                     <span className="font-semibold">Click to upload</span>
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{`${fileType || '.zip'} `}(max. 50MB)</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{fileType || ".zip"}(max. 50MB)</p>
                 </>
               ) : (
                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">

@@ -21,6 +21,13 @@ interface AssignmentProps {
   assignment: AssignmentT;
 }
 
+const extensionMap = new Map<string, string>([
+  ["c/c++", ".cpp, .c"],
+  ["python", ".py"],
+  ["javascript", ".js"],
+  ["java", ".java"],
+]);
+
 export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async () => {
     const assignmentId = queryParamToNumber(ctx.query?.assignment);
@@ -71,27 +78,8 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
   const user = useAppSelector((store) => store.user);
   const supabase = useSupabaseClient();
   const [userId, setUserId] = useState<number | undefined>(undefined);
-  const [lang, setLang] = useState<string>("");
 
   useEffect(() => {
-    const setLanguage = () => {
-      switch (assignment.language) {
-        case "c/c++": {
-          return ".cpp, .c";
-        }
-        case "python": {
-          return ".py";
-        }
-        case "javascript": {
-          return ".js";
-        }
-        case "java": {
-          return ".java";
-        }
-      }
-      return ".zip"
-    };
-
     const getUser = async () => {
       if (user.id === null) {
         await getCurrentUser(supabase).then((user) => {
@@ -105,7 +93,6 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
         router.push("/course");
       }
     };
-    setLang(setLanguage());
     getUser();
   }, []);
 
@@ -131,7 +118,13 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
           </h1>
           <p>{assignment?.description}</p>
           <div className="">
-            <Upload bucket="assignments" courseID={courseId} assignmentID={id} userID={userId} fileType={lang} />
+            <Upload
+              bucket="assignments"
+              courseID={courseId}
+              assignmentID={id}
+              userID={userId}
+              fileType={extensionMap.get(assignment.language) ?? ".zip"}
+            />
           </div>
         </div>
       )}
