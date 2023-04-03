@@ -21,6 +21,13 @@ interface AssignmentProps {
   assignment: AssignmentT;
 }
 
+const extensionMap = new Map<string, string>([
+  ["c/c++", ".cpp, .c"],
+  ["python", ".py"],
+  ["javascript", ".js"],
+  ["java", ".java"],
+]);
+
 export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async () => {
     const assignmentId = queryParamToNumber(ctx.query?.assignment);
@@ -36,7 +43,8 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
         title,
         description,
         is_open,
-        is_late, 
+        is_late,
+        language, 
         submission (
           id,
           is_late,
@@ -70,15 +78,13 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
   const user = useAppSelector((store) => store.user);
   const supabase = useSupabaseClient();
   const [userId, setUserId] = useState<number | undefined>(undefined);
-  
-  
+
   useEffect(() => {
     const getUser = async () => {
       if (user.id === null) {
         await getCurrentUser(supabase).then((user) => {
           if (user) dispatch(loadUser(user));
           setUserId(user?.id);
-          
         });
       } else {
         setUserId(user.id);
@@ -87,36 +93,41 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
         router.push("/course");
       }
     };
-
     getUser();
   }, []);
 
   return (
     <div className="flex">
       <Sidebar />
-      {
-        assignment !== null && <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
-        <h1 className="font-bold text-3xl text-slate-50 flex flex-wrap items-center gap-4">
-          Assignment: {assignment?.title}{" "}
-          {assignment?.is_open ? (
-            <>
-              <Badge variant="green">Open</Badge>
-              {assignment.is_late ? (
-                <Badge variant="orange">New submissions are late</Badge>
-              ) : (
-                <Badge variant="cyan">Ready for submissions</Badge>
-              )}
-            </>
-          ) : (
-            <Badge variant="red">Locked</Badge>
-          )}{" "}
-        </h1>
-        <p>{assignment?.description}</p>
-        <div className="">
-          <Upload bucket="assignments" courseID={courseId} assignmentID={id} userID={userId} />
+      {assignment !== null && (
+        <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
+          <h1 className="font-bold text-3xl text-slate-50 flex flex-wrap items-center gap-4">
+            Assignment: {assignment?.title}{" "}
+            {assignment?.is_open ? (
+              <>
+                <Badge variant="green">Open</Badge>
+                {assignment.is_late ? (
+                  <Badge variant="orange">New submissions are late</Badge>
+                ) : (
+                  <Badge variant="cyan">Ready for submissions</Badge>
+                )}
+              </>
+            ) : (
+              <Badge variant="red">Locked</Badge>
+            )}{" "}
+          </h1>
+          <p>{assignment?.description}</p>
+          <div className="">
+            <Upload
+              bucket="assignments"
+              courseID={courseId}
+              assignmentID={id}
+              userID={userId}
+              fileType={extensionMap.get(assignment.language) ?? ".zip"}
+            />
+          </div>
         </div>
-      </div>
-      }
+      )}
     </div>
   );
 };
