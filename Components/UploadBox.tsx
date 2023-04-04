@@ -10,13 +10,14 @@ const Upload = ({
   courseID,
   assignmentID,
   userID,
-  fileType,
+  fileType
 }: {
   bucket: string;
   courseID: number;
   assignmentID: number;
   userID: number | undefined;
-  fileType?: string;
+
+  fileType?:string;
 }) => {
   const routers = useRouter();
   const [file, setFile] = useState<File | undefined>();
@@ -42,6 +43,7 @@ const Upload = ({
       },
     ]);
   };
+  
 
   const handleClick = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
