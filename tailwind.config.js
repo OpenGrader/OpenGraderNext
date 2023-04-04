@@ -2,12 +2,9 @@
 module.exports = {
   content: ["./pages/**/*.{js,ts,jsx,tsx}", "./Components/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {
-      colors: {
-        slate: {
-          950: "#090E1A",
-        },
-      },
+    fontFamily: {
+      sans: ["IBM\\ Plex\\ Sans", "Source\\ Sans\\ Pro", "Inter", "Roboto", "Verdana", "Arial", "sans-serif"],
+      mono: ["IBM\\ Plex\\ Mono", "Fira\\ Code", "Monaco", "monospaced"],
     },
   },
   plugins: [require("@tailwindcss/forms")],

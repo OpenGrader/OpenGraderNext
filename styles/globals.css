@@ -1,20 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;300;400;500;600;700&family=Source+Sans+Pro&family=Fira+Code:wght@300;400&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;300;400;500;600;700&family=Source+Sans+Pro&display=swap");
-* {
-  font-family: "IBM Plex Sans", sans-serif;
-}
-
-body {
-  @apply bg-slate-900 text-slate-100;
-}
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&display=swap");
 pre,
 span.token.string,
 span.token.keyword,
 span.token.builtin,
 span.token.punctuation {
-  font-family: "Fira Code", monospace;
+  @apply font-mono;
 }

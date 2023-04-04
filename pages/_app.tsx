@@ -6,6 +6,7 @@ import { useState } from "react";
 import Head from "next/head";
 import { Provider } from "react-redux";
 import { store } from "store";
+import SidebarLayout from "Components/Sidebar";
 
 function MyApp({ Component, pageProps }: AppProps<{ initialSession: Session }>) {
   const [supabase] = useState(() => createBrowserSupabaseClient());
@@ -17,7 +18,9 @@ function MyApp({ Component, pageProps }: AppProps<{ initialSession: Session }>) 
           <title>OpenGrader</title>
         </Head>
         <Provider store={store}>
-          <Component {...pageProps} />
+          <SidebarLayout>
+            <Component {...pageProps} />
+          </SidebarLayout>
         </Provider>
       </SessionContextProvider>
     </>
