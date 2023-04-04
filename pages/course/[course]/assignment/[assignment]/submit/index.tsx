@@ -78,6 +78,10 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
   const user = useAppSelector((store) => store.user);
   const supabase = useSupabaseClient();
   const [userId, setUserId] = useState<number | undefined>(undefined);
+<<<<<<< HEAD
+=======
+  const [lang, setLang] = useState<string>("");
+>>>>>>> aeb82921cfb1a4dc469eaf480961a7a7aeceaee5
 
   useEffect(() => {
     const setLanguage = () => {
