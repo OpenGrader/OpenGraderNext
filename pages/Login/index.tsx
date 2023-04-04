@@ -9,8 +9,7 @@ const Book = ({ className = "" }: { className: string }) => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className={className}
-    >
+      className={className}>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -26,8 +25,8 @@ const Login: NextPage = () => {
 
   return (
     <div className="h-screen flex justify-center items-center">
-      <div className="flex flex-col w-80 items-center gap-3 font-bold text-slate-50">
-        <Book className="w-36 aspect-square stroke-slate-50" />
+      <div className="flex flex-col w-80 items-center gap-3 font-bold text-gray-50">
+        <Book className="w-36 aspect-square stroke-gray-50" />
         <h1 className="text-6xl">OpenGrader</h1>
         <form className="flex flex-col w-full gap-3">
           <input

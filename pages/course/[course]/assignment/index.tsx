@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { Assignment } from "../../../../types";
-import { HiPlusCircle } from "react-icons/hi";
+import { HiEye, HiPencil, HiPlus, HiPlusCircle, HiX } from "react-icons/hi";
 import { GetServerSidePropsContext, NextPage } from "next";
 import withProtected from "../../../../util/withProtected";
 import { getCurrentUser, queryParamToNumber } from "../../../../util/misc";
-import Sidebar from "../../../../Components/Sidebar";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/router";
+import Button from "Components/Button";
+import PanelLink from "Components/PanelLink";
 //warning,all good, late, plagarism
 
 interface AssignmentListProps {
@@ -106,12 +107,14 @@ const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean 
   const router = useRouter();
 
   return (
-    <div className="bg-slate-800 w-full p-3 rounded-md">
-      <div className="flex justify-between">
+    <div className="bg-gray-800/25 border border-gray-400 w-full p-3 rounded-md">
+      <div className="flex justify-between flex-wrap-reverse">
         <div className="flex flex-col gap-4">
           <div className="">
             <div className="text-xl flex gap-2 items-center">
-              <p className="text-xl font-bold">{title}</p>
+              <Link href={`${router.asPath}/${id}`} className="text-xl font-bold hover:underline">
+                {title}
+              </Link>
             </div>
             <p>
               {submissionCount} submission{submissionCount === 1 ? "" : "s"}
@@ -125,14 +128,23 @@ const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean 
             </h1>
           )}
         </div>
-        <h1 className="text-slate-400">
-          <Link href={`${router.asPath}/${id}`}>View</Link>
-          {isInstructor && (
-            <>
-              {" "}
-              | Edit | <span className="text-red-900">Delete</span>
-            </>
-          )}
+        <h1 className="text-gray-400 mb-2 w-full sm:w-auto">
+          <ul className="flex rounded-md border border-gray-400 shadow-xl w-min mx-auto">
+            <PanelLink title="View" position={isInstructor ? "first" : "only"} href={`${router.asPath}/${id}`}>
+              <HiEye />
+            </PanelLink>
+
+            {isInstructor && (
+              <>
+                <PanelLink title="Edit" position="other" href={`${router.asPath}/${id}/edit`}>
+                  <HiPencil />
+                </PanelLink>
+                <PanelLink title="Delete" position="last" href={`${router.asPath}/${id}/delete`}>
+                  <HiX className="text-red-500" />
+                </PanelLink>
+              </>
+            )}
+          </ul>
         </h1>
       </div>
     </div>
@@ -144,19 +156,16 @@ const Assignments: NextPage<AssignmentListProps> = ({ assignments, course, secti
 
   return (
     <div className="flex">
-      <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
-        <div className="flex justify-between items-center">
+      <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 w-full">
+        <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
           <h1 className="text-3xl font-bold">Assignments - {courseName}</h1>
           {isInstructor && (
-            <Link href={`/course/${course.id}/assignment/new`} className="">
-              <div className=" w-48 h-12 flex justify-center items-center rounded-lg bg-sky-700 text-3xl">
-                <HiPlusCircle />
-              </div>
-            </Link>
+            <Button href={`/course/${course.id}/assignment/new`}>
+              <HiPlus /> New assignment
+            </Button>
           )}
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="grid xl:grid-cols-2 gap-6">
           {assignments.map((assignment, index) => {
             return <AssignmentBlock assignment={assignment} isInstructor={isInstructor} key={index} />;
           })}

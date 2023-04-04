@@ -2,7 +2,6 @@ import withProtected from "../../../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../../../util/misc";
 import { GetServerSidePropsContext, NextPage } from "next";
 import Badge from "Components/Badge";
-import Sidebar from "Components/Sidebar";
 import { Assignment, StudentSubmission } from "types";
 import { loadUser } from "store/userSlice";
 import { getCurrentUser } from "../../../../../../util/misc";
@@ -12,6 +11,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "hooks";
 import { useRouter } from "next/router";
+import Button from "Components/Button";
 
 type AssignmentT = Assignment & { submission: StudentSubmission[] };
 
@@ -98,10 +98,9 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
 
   return (
     <div className="flex">
-      <Sidebar />
       {assignment !== null && (
-        <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
-          <h1 className="font-bold text-3xl text-slate-50 flex flex-wrap items-center gap-4">
+        <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 w-full">
+          <h1 className="font-bold text-3xl text-gray-50 flex flex-wrap items-center gap-4">
             Assignment: {assignment?.title}{" "}
             {assignment?.is_open ? (
               <>

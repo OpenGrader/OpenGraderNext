@@ -1,11 +1,14 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import Sidebar from "Components/Sidebar";
+import PanelLink from "Components/PanelLink";
 import { GetServerSidePropsContext, NextPage } from "next";
 import Link from "next/link";
-import { HiPlusCircle } from "react-icons/hi";
+import { HiPlus, HiPlusCircle } from "react-icons/hi";
+import { useRouter } from "next/router";
+import { HiEye, HiPencil, HiX } from "react-icons/hi";
 import { Assignment, Submission } from "types";
 import { getCurrentUser } from "util/misc";
 import withProtected from "util/withProtected";
+import Button from "Components/Button";
 
 type CourseSection = {
   section: {
@@ -20,7 +23,7 @@ type CourseSection = {
 };
 
 interface CourseListProps {
-  sections: CourseSection[];
+  sections: Array<CourseSection & { role: "STUDENT" | "INSTRUCTOR" }>;
   submissions: Record<number, Array<FormattedSubmissionT>>;
   isInstructor: any;
 }
@@ -40,7 +43,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
     const sections = await supabase
       .from("membership")
       .select(
-        `section (
+        `role, 
+        section (
           id,
           section_number,
           course (
@@ -138,24 +142,46 @@ const makeInfoString = (assignment: Assignment): string => {
   return `(${ret.join(", ")})`;
 };
 
-const SectionCard: React.FC<CourseSection["section"] & { submissions: Array<FormattedSubmissionT> }> = ({
-  id,
-  section_number,
-  course,
-  assignment,
-  submissions,
-}) => {
+const SectionCard: React.FC<
+  CourseSection["section"] & { submissions: Array<FormattedSubmissionT>; role: "STUDENT" | "INSTRUCTOR" }
+> = ({ id, section_number, role, course, assignment, submissions }) => {
+  const router = useRouter();
+
   return (
-    <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-slate-800 shadow w-full">
-      <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-4">
-        {course.department} {course.number}.{section_number}{" "}
-        <Link
-          href={`/course/${id}/assignment`}
-          className="inline-flex items-center rounded border border-transparent bg-cyan-700 px-2.5 py-1 text-xs font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
-          View course
-        </Link>
+    <div className="bg-gray-800/25 border border-gray-400 w-full p-6 rounded-md">
+      <div className="flex justify-between flex-wrap-reverse">
+        <div className="flex flex-col gap-4">
+          <div className="">
+            <div className="text-xl flex gap-2 items-center">
+              <Link href={`${router.asPath}/${id}/assignment`} className="text-xl font-bold hover:underline">
+                {course.department} {course.number}.{section_number}
+              </Link>
+            </div>
+          </div>
+        </div>
+        <h1 className="text-gray-400 mb-2 w-full sm:w-auto">
+          <ul className="flex rounded-md border border-gray-400 shadow-xl w-min mx-auto">
+            <PanelLink
+              title="View"
+              position={role === "INSTRUCTOR" ? "first" : "only"}
+              href={`${router.asPath}/${id}/assignment`}>
+              <HiEye />
+            </PanelLink>
+
+            {role === "INSTRUCTOR" && (
+              <>
+                <PanelLink title="Edit" position="other" href={`${router.asPath}/${id}/edit`}>
+                  <HiPencil />
+                </PanelLink>
+                <PanelLink title="Delete" position="last" href={`${router.asPath}/${id}/delete`}>
+                  <HiX className="text-red-500" />
+                </PanelLink>
+              </>
+            )}
+          </ul>
+        </h1>
       </div>
-      <div className="px-4 py-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div>
           <strong className="font-semibold">Recent assignments</strong>
           <ul>
@@ -166,19 +192,18 @@ const SectionCard: React.FC<CourseSection["section"] & { submissions: Array<Form
             ))}
           </ul>
         </div>
-        <div>
-          <strong className="font-semibold">Recent submissions</strong>
-          <ul>
-            {submissions.slice(0, 3).map((submission, idx) => (
-              <li key={idx}>
-                <>{submission.formatted}</>
-              </li>
-            ))}
-            {/* <li>Basic Sorting - Jackson Welsh (jcw0351)</li>
-            <li>Basic Sorting - Dayton Forehand (dbz0432)</li>
-            <li>Basic Sorting - Kobe Edmond (kde0232)</li> */}
-          </ul>
-        </div>
+        {role === "INSTRUCTOR" && (
+          <div>
+            <strong className="font-semibold">Recent submissions</strong>
+            <ul>
+              {submissions.slice(0, 3).map((submission, idx) => (
+                <li key={idx}>
+                  <>{submission.formatted}</>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -187,19 +212,14 @@ const SectionCard: React.FC<CourseSection["section"] & { submissions: Array<Form
 const CourseListPage: NextPage<CourseListProps> = ({ sections, submissions }) => {
   return (
     <div className="flex">
-      <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
-        <div className="flex justify-between items-center flex-wrap gap-2">
-          <div className="flex justify-between items-center w-full">
-            <h1 className="text-3xl font-bold">Your courses</h1>
-            <Link href="/course/new" className="">
-              <div className=" w-48 h-12 flex justify-center items-center rounded-lg bg-sky-700 text-3xl">
-                <HiPlusCircle />
-              </div>
-            </Link>
-          </div>
-          {sections?.map(({ section }) => (
-            <SectionCard {...section} submissions={submissions[section.id] ?? []} key={section.id} />
+      <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 w-full">
+        <div className="flex justify-between items-center flex-wrap gap-6">
+          <h1 className="text-3xl font-bold w-full">Your Courses</h1>
+          <Button variant="primary" href="/course/new">
+            <HiPlus /> Create course
+          </Button>
+          {sections?.map(({ section, role }) => (
+            <SectionCard {...section} submissions={submissions[section.id] ?? []} key={section.id} role={role} />
           ))}
         </div>
       </div>

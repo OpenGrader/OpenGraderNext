@@ -6,7 +6,7 @@ import withProtected from "../../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../../util/misc";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { User, Assignment } from "types";
-import Link from "next/link";
+import Button from "Components/Button";
 import { supabaseAdmin } from "util/supabaseClient";
 import CodeBrowser from "Components/CodeBrowser";
 
@@ -107,7 +107,7 @@ const SubmissionCard: React.FC<Submission & { file: string}> = ({id, is_late, sc
 
   return (
     <div onClick={handleSubmissionCardClick}>
-      <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-slate-800 shadow w-full">
+      <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-gray-800 shadow w-full">
         <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-2">
           {studentDesc} {is_late && <Badge variant="red">Late</Badge>}
         </div>
@@ -133,12 +133,11 @@ const SubmissionCard: React.FC<Submission & { file: string}> = ({id, is_late, sc
 
 const AssignmentView: NextPage<AssignmentProps> = ({ assignment, file, courseId }) => {
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 w-10/12 ml-auto">
-        <div className="flex justify-between items-center">
-          <div className="">
-            <h1 className="font-bold text-3xl text-slate-50 flex flex-wrap items-center gap-4">
+    <div className="flex flex-wrap">
+      <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 w-full">
+        <div className="grid gap-6">
+          <div className="grid gap-6">
+            <h1 className="font-bold text-3xl text-gray-50 flex flex-wrap items-center gap-4 w-full">
               Assignment: {assignment.title}{" "}
               {assignment.is_open ? (
                 <>
@@ -153,15 +152,13 @@ const AssignmentView: NextPage<AssignmentProps> = ({ assignment, file, courseId 
                 <Badge variant="red">Locked</Badge>
               )}{" "}
             </h1>
-            <p>{assignment.description}</p>
-            <h2 className="font-semibold text-2xl text-slate-50">Submissions</h2>
+            <p className="max-w-[80ch]">{assignment.description}</p>
           </div>
 
-          <Link href={`/course/${courseId}/assignment/${assignment.id}/submit`} className="">
-            <div className="inline-flex items-center rounded border border-transparent bg-cyan-700 px-4 py-2 text-3xl font-medium text-cyan-50 shadow-sm hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
-              <h1>Submit</h1>
-            </div>
-          </Link>
+          <Button href={`/course/${courseId}/assignment/${assignment.id}/submit`} arrow="right" className="w-min">
+            <h1>Submit</h1>
+          </Button>
+          <h2 className="font-semibold text-2xl text-gray-50">Submissions</h2>
         </div>
         {assignment.submission.map((submission) => {
               if (typeof submission.student === "number") {
@@ -180,6 +177,7 @@ const AssignmentView: NextPage<AssignmentProps> = ({ assignment, file, courseId 
                 )
               );
             })}
+        {assignment.submission.length === 0 && <em className="text-gray-300">No submissions yet.</em>}
       </div>
     </div>
   );

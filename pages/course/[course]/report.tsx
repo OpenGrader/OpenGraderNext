@@ -1,5 +1,4 @@
 import ConsoleText from "Components/ConsoleText";
-import Sidebar from "Components/Sidebar";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { TestCase } from "types";
 import withProtected from "util/withProtected";
@@ -57,7 +56,7 @@ const ReportBlock = ({
   results: results,
 }: TestCase) => {
   return (
-    <div className="bg-slate-800 w-full p-4 rounded-md flex flex-col gap-4">
+    <div className="bg-gray-800 w-full p-4 rounded-md flex flex-col gap-4">
       <h1 className="text-2xl font-bold">
         Case: <span className="underline">{details}</span>
       </h1>
@@ -79,8 +78,7 @@ const ReportBlock = ({
 const GradeReport: NextPage<ReportProps> = ({ warnings, cases }) => {
   return (
     <div className="flex">
-      <Sidebar />
-      <div className="text-slate-100 px-12 pt-6 flex flex-col gap-4 min-h-screen w-10/12 ml-auto">
+      <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 min-h-screen w-full">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Assignment 1 Grade Report - KDE0091</h1>
         </div>
