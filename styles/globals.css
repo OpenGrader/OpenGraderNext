@@ -32,6 +32,10 @@ td {
   padding: 0;
 }
 
+.selected {
+  background-color: #2f405d;
+}
+
 .line-number {
   font-family: "Fira Code", monospace;
   text-align: right;

@@ -2,6 +2,7 @@ import Prism from "prismjs"; //used for syntax highlighting
 import "prismjs/components/prism-python"; //supports syntax highlighting for python only
 import "prismjs/themes/prism-okaidia.css"; //stylizes syntax highlighting
 import { listeners } from "process";
+import React from "react";
 
 interface CodeBrowserProps {
   language: string;
@@ -19,12 +20,22 @@ interface CommentsProps {
 
 const CodeBrowser: React.FC<CodeBrowserProps> = ({ language, code }) => {
   const lines = code.split("\n");
+  const [selectedLine, setSelectedLine] = React.useState<number | null>(null);
+
+  const handleLineClick = (lineNumber: number) => {
+    setSelectedLine(lineNumber);
+  };
+
   return (
   <div className="code-browser">
     <table>
       <tbody>
         {lines.map((line, index) => (
-          <tr key={index}>
+          <tr 
+          key={index}
+          className={selectedLine === index + 1 ? "selected" : ""}
+          onClick={() => handleLineClick(index + 1)}
+          >
             <td className="line-number">{index + 1}</td>
             <td>
               <pre
