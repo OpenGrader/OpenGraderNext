@@ -21,6 +21,13 @@ interface AssignmentProps {
   assignment: AssignmentT;
 }
 
+const extensionMap = new Map<string, string>([
+  ["c/c++", ".cpp, .c"],
+  ["python", ".py"],
+  ["javascript", ".js"],
+  ["java", ".java"],
+]);
+
 export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async () => {
     const assignmentId = queryParamToNumber(ctx.query?.assignment);
@@ -36,7 +43,8 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
         title,
         description,
         is_open,
-        is_late, 
+        is_late,
+        language, 
         submission (
           id,
           is_late,
@@ -85,7 +93,6 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
         router.push("/course");
       }
     };
-
     getUser();
   }, []);
 
@@ -110,7 +117,13 @@ const AssignmentUpload: NextPage<AssignmentProps> = ({ id, courseId, assignment 
           </h1>
           <p>{assignment?.description}</p>
           <div className="">
-            <Upload bucket="assignments" courseID={courseId} assignmentID={id} userID={userId} />
+            <Upload
+              bucket="assignments"
+              courseID={courseId}
+              assignmentID={id}
+              userID={userId}
+              fileType={extensionMap.get(assignment.language) ?? ".zip"}
+            />
           </div>
         </div>
       )}

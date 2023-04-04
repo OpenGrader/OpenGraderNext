@@ -68,6 +68,7 @@ export type Assignment = {
   section: number;
   submissionCount: number;
   warnings: number;
+  language: string;
   submission: Submission[];
 };
 

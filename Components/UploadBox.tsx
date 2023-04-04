@@ -10,11 +10,13 @@ const Upload = ({
   courseID,
   assignmentID,
   userID,
+  fileType,
 }: {
   bucket: string;
   courseID: number;
   assignmentID: number;
   userID: number | undefined;
+  fileType?: string;
 }) => {
   const routers = useRouter();
   const [file, setFile] = useState<File | undefined>();
@@ -46,7 +48,7 @@ const Upload = ({
     fileUpload(file);
     routers.push("/course");
   };
-
+  console.log(fileType);
   return (
     <>
       <form className="w-full flex flex-col items-end gap-2 p-2">
@@ -73,7 +75,7 @@ const Upload = ({
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                     <span className="font-semibold">Click to upload</span>
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">.zip (max. 50MB)</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{fileType || ".zip"}(max. 50MB)</p>
                 </>
               ) : (
                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
@@ -85,7 +87,7 @@ const Upload = ({
               id="dropzone-file"
               type="file"
               className="hidden"
-              accept=".zip"
+              accept={fileType}
               onChange={(e) => setFile(e.target.files?.[0])}
             />
           </label>
