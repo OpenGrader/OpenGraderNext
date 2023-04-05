@@ -248,7 +248,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
               </select>
             </div>
           </div>
-
+          <FileBox title="Input Definition"/>
           <div className="pb-4">
             <h1 className="text-sm font-medium text-gray-300 pb-2">Input definition</h1>
             <label
