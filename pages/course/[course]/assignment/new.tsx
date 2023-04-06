@@ -6,8 +6,7 @@ import { useState, useReducer } from "react";
 import { nanoid } from "nanoid";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
-import { Assignment } from "types";
-
+import { HiOutlineChevronDoubleRight, HiOutlineChevronDoubleLeft, HiOutlinePlus, HiOutlineMinus } from "react-icons/hi";
 import { MouseEvent } from "react";
 import Button from "Components/Button";
 
@@ -35,7 +34,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
         },
       };
     }
-
     return {
       props: {
         courseId,
@@ -46,7 +44,10 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
 interface fileState {
   fileStore: (File | undefined)[];
 }
-type Payload = { type: "increment" } | { type: "decrement" } | { type: "update"; location: number; file: File | undefined };
+type Payload =
+  | { type: "increment" }
+  | { type: "decrement" }
+  | { type: "update"; location: number; file: File | undefined };
 
 function fileReducer(fileState: fileState, action: Payload): fileState {
   switch (action.type) {
@@ -66,52 +67,9 @@ function fileReducer(fileState: fileState, action: Payload): fileState {
   }
 }
 
-
-const FileBox = ({ title, file }: { title: string; file?: File }) => {
-  return (
-    <div className="pb-4">
-      <h1 className="text-sm font-medium text-gray-300 pb-2">{title}</h1>
-      <label
-        htmlFor="input-def"
-        className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-800/25 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-700/25 transition">
-        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-          <svg aria-hidden="true" fill="none" stroke="currentColor" className="w-12 h-12 mx-auto text-gray-600">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-          </svg>
-          {!file ? (
-            <>
-              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                <span className="font-semibold">Click to upload</span>
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">.txt (max. 50MB)</p>
-            </>
-          ) : (
-            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-              Currently selected: <span className="font-semibold">{file?.name}</span>
-            </p>
-          )}
-        </div>
-        <input
-          id="input-def"
-          type="file"
-          className="hidden"
-          accept=".txt"
-          // onChange={(e) => setInputFile(e.target.files?.[0])}
-        />
-      </label>
-    </div>
-  );
-};
-
 const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
   const supabase = useSupabaseClient();
   const router = useRouter();
-  const [inputFile, setInputFile] = useState<File | undefined>();
-  const [outputFile, setOutputFile] = useState<File | undefined>();
   const [title, setTitle] = useState<string>();
   const [lang, setLang] = useState<string>("c/c++");
   const [desc, setDesc] = useState<string>();
@@ -119,14 +77,13 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
   const [count, setCount] = useReducer((state: number, action: string) => {
     switch (action) {
       case "increment":
-        return state + 1;
+        return Math.min(state + 2, fileState.fileStore.length - 2);
       case "decrement":
-        return Math.max(state - 1, 0);
+        return Math.max(state - 2, 0);
       default:
         throw new Error(`Unhandled action type: ${action}`);
     }
   }, 0);
-
 
   const upload = async (filePath: string, file: File | undefined) => {
     await supabase.storage
@@ -136,29 +93,30 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
   };
 
   const fileUpload = async () => {
-    const inputID = nanoid();
-    const outputID = nanoid();
-
-    const inputPath = `${courseId}/${inputID}.${inputFile?.name.split(".").pop()}`;
-    const outputPath = `${courseId}/${outputID}.${outputFile?.name.split(".").pop()}`;
-
-    upload(inputPath, inputFile);
-    upload(outputPath, outputFile);
-    createRecord(inputPath, outputPath);
-    // return Promise.resolve([inputPath, outputPath]);
+    for (let x = 0; x < count; x++) {
+      if (fileState.fileStore[x] == undefined) throw new Error("Test case contains empty file");
+    }
+    let paths: string[] = [];
+    for (let x = 0; x < fileState.fileStore.length; x++) {
+      const path = `${courseId}/${nanoid()}.${fileState.fileStore[x]?.name.split(".").pop()}`;
+      paths.push(path);
+      upload(path, fileState.fileStore[0]);
+    }
+    console.log(paths);
+    createRecord(paths);
   };
 
-  const createRecord = async (inputPath: string, outputPath: string) => {
+  const createRecord = async (paths: string[]) => {
     const { data: assignment, error } = await supabase
       .from("assignment")
       .insert({
         section: courseId,
-        title: title,
-        description: desc,
+        title: title || "Untitled",
+        description: desc || "No Description",
         is_open: true,
         is_late: false,
-        input_file: inputPath,
-        output_file: outputPath,
+        input_file: paths[0],
+        output_file: paths[1],
         language: lang.toLowerCase(),
       })
       .select();
@@ -170,7 +128,21 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
     const assignmentId = assignment?.[0]?.id;
 
     if (assignmentId) {
-      router.push(`/course/${courseId}/assignment/${assignmentId}`);
+      let records = [];
+      for (let x = 0; x < paths.length / 2; x++) {
+        records.push({
+          assignment_id: assignmentId,
+          input_file: paths[x * 2],
+          output_file: paths[x * 2 + 1],
+        });
+      }
+      const { data, error } = await supabase.from("test_cases").insert(records);
+      if (error) {
+        console.log(error);
+        router.push(`/course/${courseId}/assignment`);
+      } else {
+        router.push(`/course/${courseId}/assignment/${assignmentId}`);
+      }
     } else {
       router.push(`/course/${courseId}/assignment`);
     }
@@ -178,7 +150,9 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
 
   const handleClick = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
-    fileUpload();
+    fileUpload().catch((error) => {
+      console.log(error);
+    });
   };
 
   return (
@@ -234,7 +208,32 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
               </select>
             </div>
           </div>
-
+          <div className="flex justify-between items-center text-xl font-bold">
+            <h4>Test Case: {count / 2 + 1}</h4>
+            <div className="flex">
+              <button
+                type="button"
+                onClick={() => {
+                  fileDispatch({ type: "decrement" });
+                  if (count >= fileState.fileStore.length - 2) setCount("decrement");
+                }}>
+                <HiOutlineMinus />
+                <p className="sr-only">{fileState.fileStore.length < 3 ? "Remove last test" : "No more tests"}</p>
+              </button>
+              <button type="button" onClick={() => setCount("decrement")}>
+                <HiOutlineChevronDoubleLeft />
+                <p className="sr-only">{count >= 0 ? "Previous Test" : "On first test"}</p>
+              </button>
+              <button type="button" onClick={() => setCount("increment")}>
+                <HiOutlineChevronDoubleRight />
+                <p className="sr-only">{count < fileState.fileStore.length - 1 ? "Next Test" : "No more tests"}</p>
+              </button>
+              <button type="button" onClick={() => fileDispatch({ type: "increment" })}>
+                <HiOutlinePlus />
+                <p className="sr-only">add test cases</p>
+              </button>
+            </div>
+          </div>
           <div className="pb-4">
             <h1 className="text-sm font-medium text-gray-300 pb-2">Input definition</h1>
             <label
@@ -293,7 +292,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
                   </>
                 ) : (
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    Currently selected: <span className="font-semibold">{fileState.fileStore[count+1]?.name}</span>
+                    Currently selected: <span className="font-semibold">{fileState.fileStore[count + 1]?.name}</span>
                   </p>
                 )}
               </div>
@@ -309,7 +308,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
 
           <input type="hidden" value={courseId} name="section" id="section" />
           <Button
-            type="button"
+            type="submit"
             className="whitespace-nowrap w-min ml-auto mt-2"
             size="lg"
             onClick={(e: MouseEvent<HTMLButtonElement>) => handleClick(e)}>
