@@ -1,7 +1,6 @@
 import Prism from "prismjs"; //used for syntax highlighting
 import "prismjs/components/prism-python"; //supports syntax highlighting for python only
 import "prismjs/themes/prism-okaidia.css"; //stylizes syntax highlighting
-import { listeners } from "process";
 import React from "react";
 
 interface CodeBrowserProps {
