@@ -1,6 +1,5 @@
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useState } from "react";
-import Sidebar from "../../../../../Components/Sidebar";
 import Badge, { BadgeVariant } from "Components/Badge";
 import withProtected from "../../../../../util/withProtected";
 import { queryParamToNumber } from "../../../../../util/misc";
@@ -9,6 +8,9 @@ import { User, Assignment } from "types";
 import Button from "Components/Button";
 import { supabaseAdmin } from "util/supabaseClient";
 import CodeBrowser from "Components/CodeBrowser";
+import Comments from "Components/Comments";
+import {Comment} from 'Components/Comments';
+import { useAppSelector } from "hooks";
 
 type Submission = {
   id: string;
@@ -95,9 +97,20 @@ const flagClass = (flag: string): BadgeVariant => {
 
 const SubmissionCard: React.FC<Submission & { file: string}> = ({id, is_late, score, flags, student, file}) => {
   const [isSubmissionCardClicked, setIsSubmissionCardClicked] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const user = useAppSelector((store) => store.user)
   const handleSubmissionCardClick = () => {
     setIsSubmissionCardClicked((prevState) => !prevState);
   };
+  const handleCommentSubmit = (lineNumber: number, lineContent: string, text: string) => {
+    const newComment = {
+      lineNumber: lineNumber,
+      lineContent: lineContent,
+      text: text,
+      author: user.name,
+    }
+    setComments([...comments, newComment])
+  }
   let studentDesc: string;
   if (student.given_name || student.family_name) {
     studentDesc = `${student.given_name} ${student.family_name}`;
@@ -106,12 +119,12 @@ const SubmissionCard: React.FC<Submission & { file: string}> = ({id, is_late, sc
   }
 
   return (
-    <div onClick={handleSubmissionCardClick}>
+    <div>
       <div className="divide-y divide-gray-600 overflow-hidden rounded-lg bg-gray-800 shadow w-full">
-        <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-2">
+        <div className="px-4 py-5 sm:px-6 text-xl flex items-center gap-2" onClick={handleSubmissionCardClick}>
           {studentDesc} {is_late && <Badge variant="red">Late</Badge>}
         </div>
-        <div className="px-4 py-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="px-4 py-5 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-2" onClick={handleSubmissionCardClick}>
           <div>
             <div className="font-bold">Score</div>
             <div className="my-1">{score ? score : "Ungraded"}</div>
@@ -125,7 +138,8 @@ const SubmissionCard: React.FC<Submission & { file: string}> = ({id, is_late, sc
             </div>
           </div>
         </div>
-        <div className="pl-6">{<CodeBrowser language="python" code={file} />}</div>
+        <div>{isSubmissionCardClicked && <CodeBrowser language="python" code={file} onCommentSubmit={handleCommentSubmit}/>}</div>
+        <div>{isSubmissionCardClicked && <Comments comments={comments}></Comments>}</div>
       </div>
     </div>
   );
