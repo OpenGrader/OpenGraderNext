@@ -2,12 +2,11 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { getCurrentUser, queryParamToNumber } from "util/misc";
 import withProtected from "util/withProtected";
-import { useState } from "react";
+import { useState, useReducer } from "react";
 import { nanoid } from "nanoid";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
-import { Assignment } from "types";
-
+import { HiOutlineChevronDoubleRight, HiOutlineChevronDoubleLeft, HiOutlinePlus, HiOutlineMinus } from "react-icons/hi";
 import { MouseEvent } from "react";
 import Button from "Components/Button";
 
@@ -18,10 +17,8 @@ interface CreateAssignmentProps {
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
   withProtected(ctx, async (ctx) => {
     const courseId = queryParamToNumber(ctx.query?.course);
-
     const supabase = createServerSupabaseClient(ctx);
     const user = await getCurrentUser(supabase);
-
     const { data: currentUserMembership } = await supabase
       .from("membership")
       .select("role")
@@ -37,7 +34,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
         },
       };
     }
-
     return {
       props: {
         courseId,
@@ -45,47 +41,82 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
     };
   });
 
+interface fileState {
+  fileStore: (File | undefined)[];
+}
+type Payload =
+  | { type: "increment" }
+  | { type: "decrement" }
+  | { type: "update"; location: number; file: File | undefined };
+
+function fileReducer(fileState: fileState, action: Payload): fileState {
+  switch (action.type) {
+    case "increment":
+      if (fileState.fileStore.length >= 10) return { fileStore: fileState.fileStore }; // has to be atleast one case
+      else return { fileStore: fileState.fileStore.concat([undefined, undefined]) };
+    case "decrement":
+      if (fileState.fileStore.length <= 2) return { fileStore: fileState.fileStore }; // has to be atleast one case
+      else return { fileStore: fileState.fileStore.slice(0, -2) };
+
+    case "update":
+      let array = [...fileState.fileStore];
+      array[action.location] = action.file;
+      return { fileStore: array };
+    default:
+      throw new Error();
+  }
+}
+
 const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
   const supabase = useSupabaseClient();
-  const [inputFile, setInputFile] = useState<File | undefined>();
-  const [outputFile, setOutputFile] = useState<File | undefined>();
+  const router = useRouter();
   const [title, setTitle] = useState<string>();
   const [lang, setLang] = useState<string>("c/c++");
   const [desc, setDesc] = useState<string>();
-  const router = useRouter();
+  const [fileState, fileDispatch] = useReducer(fileReducer, { fileStore: [undefined, undefined] });
+  const [count, setCount] = useReducer((state: number, action: string) => {
+    switch (action) {
+      case "increment":
+        return Math.min(state + 2, fileState.fileStore.length - 2);
+      case "decrement":
+        return Math.max(state - 2, 0);
+      default:
+        throw new Error(`Unhandled action type: ${action}`);
+    }
+  }, 0);
 
-  const fileUpload = async () => {
-    const upload = async (filePath: string, file: File | undefined) => {
-      await supabase.storage
-        .from("spec-storage")
-        .upload(filePath, file || "")
-        .catch((error) => console.log(error));
-    };
-
-    const inputID = nanoid();
-    const outputID = nanoid();
-
-    const inputPath = `${courseId}/${inputID}.${inputFile?.name.split(".").pop()}`;
-    const outputPath = `${courseId}/${outputID}.${outputFile?.name.split(".").pop()}`;
-
-    upload(inputPath, inputFile);
-    upload(outputPath, outputFile);
-    createRecord(inputPath, outputPath);
-    // return Promise.resolve([inputPath, outputPath]);
+  const upload = async (filePath: string, file: File | undefined) => {
+    await supabase.storage
+      .from("spec-storage")
+      .upload(filePath, file || "")
+      .catch((error) => console.log(error));
   };
 
-  const createRecord = async (inputPath: string, outputPath: string) => {
-    console.log("HERE: " + courseId);
+  const fileUpload = async () => {
+    for (let x = 0; x < count; x++) {
+      if (fileState.fileStore[x] == undefined) throw new Error("Test case contains empty file");
+    }
+    let paths: string[] = [];
+    for (let x = 0; x < fileState.fileStore.length; x++) {
+      const path = `${courseId}/${nanoid()}.${fileState.fileStore[x]?.name.split(".").pop()}`;
+      paths.push(path);
+      upload(path, fileState.fileStore[0]);
+    }
+    console.log(paths);
+    createRecord(paths);
+  };
+
+  const createRecord = async (paths: string[]) => {
     const { data: assignment, error } = await supabase
       .from("assignment")
       .insert({
         section: courseId,
-        title: title,
-        description: desc,
+        title: title || "Untitled",
+        description: desc || "No Description",
         is_open: true,
         is_late: false,
-        input_file: inputPath,
-        output_file: outputPath,
+        input_file: paths[0],
+        output_file: paths[1],
         language: lang.toLowerCase(),
       })
       .select();
@@ -97,7 +128,21 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
     const assignmentId = assignment?.[0]?.id;
 
     if (assignmentId) {
-      router.push(`/course/${courseId}/assignment/${assignmentId}`);
+      let records = [];
+      for (let x = 0; x < paths.length / 2; x++) {
+        records.push({
+          assignment_id: assignmentId,
+          input_file: paths[x * 2],
+          output_file: paths[x * 2 + 1],
+        });
+      }
+      const { data, error } = await supabase.from("test_cases").insert(records);
+      if (error) {
+        console.log(error);
+        router.push(`/course/${courseId}/assignment`);
+      } else {
+        router.push(`/course/${courseId}/assignment/${assignmentId}`);
+      }
     } else {
       router.push(`/course/${courseId}/assignment`);
     }
@@ -105,7 +150,9 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
 
   const handleClick = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
-    fileUpload();
+    fileUpload().catch((error) => {
+      console.log(error);
+    });
   };
 
   return (
@@ -161,7 +208,32 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
               </select>
             </div>
           </div>
-
+          <div className="flex justify-between items-center text-xl font-bold">
+            <h4>Test Case: {count / 2 + 1}</h4>
+            <div className="flex">
+              <button
+                type="button"
+                onClick={() => {
+                  fileDispatch({ type: "decrement" });
+                  if (count >= fileState.fileStore.length - 2) setCount("decrement");
+                }}>
+                <HiOutlineMinus />
+                <p className="sr-only">{fileState.fileStore.length < 3 ? "Remove last test" : "No more tests"}</p>
+              </button>
+              <button type="button" onClick={() => setCount("decrement")}>
+                <HiOutlineChevronDoubleLeft />
+                <p className="sr-only">{count >= 0 ? "Previous Test" : "On first test"}</p>
+              </button>
+              <button type="button" onClick={() => setCount("increment")}>
+                <HiOutlineChevronDoubleRight />
+                <p className="sr-only">{count < fileState.fileStore.length - 1 ? "Next Test" : "No more tests"}</p>
+              </button>
+              <button type="button" onClick={() => fileDispatch({ type: "increment" })}>
+                <HiOutlinePlus />
+                <p className="sr-only">add test cases</p>
+              </button>
+            </div>
+          </div>
           <div className="pb-4">
             <h1 className="text-sm font-medium text-gray-300 pb-2">Input definition</h1>
             <label
@@ -175,16 +247,16 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
                     strokeWidth="2"
                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                 </svg>
-                {!inputFile ? (
+                {!fileState.fileStore[count] ? (
                   <>
                     <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                       <span className="font-semibold">Click to upload</span>
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">.zip (max. 50MB)</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">.txt (max. 50MB)</p>
                   </>
                 ) : (
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    Currently selected: <span className="font-semibold">{inputFile?.name}</span>
+                    Currently selected: <span className="font-semibold">{fileState.fileStore[count]?.name}</span>
                   </p>
                 )}
               </div>
@@ -193,7 +265,7 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
                 type="file"
                 className="hidden"
                 accept=".txt"
-                onChange={(e) => setInputFile(e.target.files?.[0])}
+                onChange={(e) => fileDispatch({ type: "update", location: count, file: e.target.files?.[0] })}
               />
             </label>
           </div>
@@ -211,16 +283,16 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
                     strokeWidth="2"
                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                 </svg>
-                {!outputFile ? (
+                {!fileState.fileStore[count + 1] ? (
                   <>
                     <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                       <span className="font-semibold">Click to upload</span>
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">.zip (max. 50MB)</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">.txt (max. 50MB)</p>
                   </>
                 ) : (
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    Currently selected: <span className="font-semibold">{outputFile?.name}</span>
+                    Currently selected: <span className="font-semibold">{fileState.fileStore[count + 1]?.name}</span>
                   </p>
                 )}
               </div>
@@ -229,14 +301,14 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
                 type="file"
                 className="hidden"
                 accept=".txt"
-                onChange={(e) => setOutputFile(e.target.files?.[0])}
+                onChange={(e) => fileDispatch({ type: "update", location: count + 1, file: e.target.files?.[0] })}
               />
             </label>
           </div>
 
           <input type="hidden" value={courseId} name="section" id="section" />
           <Button
-            type="button"
+            type="submit"
             className="whitespace-nowrap w-min ml-auto mt-2"
             size="lg"
             onClick={(e: MouseEvent<HTMLButtonElement>) => handleClick(e)}>
