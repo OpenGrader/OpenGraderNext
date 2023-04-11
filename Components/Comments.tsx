@@ -2,8 +2,8 @@ import Prism from "prismjs";
 
 
 export interface Comment {
-    lineNumber: number;
-    lineContent: string;
+    line_number: number;
+    line_content: string;
     text: string;
     author: string | null;
 }
@@ -22,11 +22,11 @@ const Comments: React.FC<CommentsProps> = ({comments}) => {
                     <div className="px-4 sm:px-6" key={index}>
                         <div className="font-semibold">{comment.author}</div>
                         <div className="flex gap-x-3">
-                            <div className="text-[#aaa] font-mono">{comment.lineNumber}</div>
+                            <div className="text-[#aaa] font-mono">{comment.line_number}</div>
                                 <pre
                                     className="line-code"
                                     dangerouslySetInnerHTML={{
-                                    __html: Prism.highlight(comment.lineContent, Prism.languages["python"], "python"),
+                                    __html: Prism.highlight(comment.line_content, Prism.languages["python"], "python"),
                                     }}
                                 />
                         </div>
