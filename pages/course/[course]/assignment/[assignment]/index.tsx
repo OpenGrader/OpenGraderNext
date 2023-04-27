@@ -83,7 +83,8 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
               line_number,
               comment_text,
               name,
-              line_content
+              line_content,
+              assignment_id
               `).order("created_at", { ascending: false });
     return {
       props: {
@@ -122,11 +123,11 @@ const SubmissionCard: React.FC<Submission & { file: string, serverComments: Comm
   const handleCommentSubmit = async (submissionNanoID: string, lineNumber: number, lineContent: string, commentText: string) => {
     //create new comment object
     const newComment = {
-      submission_nano_ID: submissionNanoID,
       line_number: lineNumber,
       comment_text: commentText,
       name: user.name,
       line_content: lineContent,
+      assignment_id: id,
     }
     
     //insert new comment into supabase and error check
@@ -170,7 +171,7 @@ const SubmissionCard: React.FC<Submission & { file: string, serverComments: Comm
           </div>
         </div>
         <div>{isSubmissionCardClicked && <CodeBrowser language="python" code={file} onCommentSubmit={handleCommentSubmit}/>}</div>
-        <div>{isSubmissionCardClicked && <Comments comments={comments}></Comments>}</div>
+        <div>{isSubmissionCardClicked && <Comments assignment_id={id} comments={comments}></Comments>}</div>
       </div>
     </div>
   );
