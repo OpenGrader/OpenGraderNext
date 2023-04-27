@@ -7,7 +7,7 @@ import Button from "./Button";
 interface CodeBrowserProps {
   language: string;
   code: string;
-  onCommentSubmit: (lineNumber: number, lineContent: string, text: string) => void; //fix this later
+  onCommentSubmit: (submissionNanoID: string, lineNumber: number, lineContent: string, text: string) => void; //fix this later
 }
 
 const CodeBrowser: React.FC<CodeBrowserProps> = ({ language, code, onCommentSubmit }) => {
@@ -21,10 +21,12 @@ const CodeBrowser: React.FC<CodeBrowserProps> = ({ language, code, onCommentSubm
 
   const handleCommentSubmit = (event: React.FormEvent<HTMLFormElement>, lineContent:string, lineNumber: number) => {
     event.preventDefault();
+    const submissionNanoID = "ZmXBpMYoWYTkYrzLC15Ac"; //hardcoded for now, don't know how to request this given the way our current backend is set up.
+    
     const formData = new FormData(event.currentTarget);
-    const comment = formData.get("comment") as string;
-    setComments({...comments, [lineNumber]: comment});
-    onCommentSubmit(lineNumber, lineContent, comment);
+    const commentText = formData.get("comment") as string;
+    setComments({...comments, [lineNumber]: commentText});
+    onCommentSubmit(submissionNanoID, lineNumber, lineContent, commentText);
   };
   return (
   <div className="py-5">
