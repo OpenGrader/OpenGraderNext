@@ -212,7 +212,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               enterTo="opacity-100"
               leave="transition-opacity ease-linear duration-300"
               leaveFrom="opacity-100"
-              leaveTo="opacity-0">
+              leaveTo="opacity-0"
+            >
               <div className="fixed inset-0 bg-gray-950/80" />
             </Transition.Child>
 
@@ -224,7 +225,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 enterTo="translate-x-0"
                 leave="transition ease-in-out duration-300 transform"
                 leaveFrom="translate-x-0"
-                leaveTo="-translate-x-full">
+                leaveTo="-translate-x-full"
+              >
                 <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
                   <Transition.Child
                     as={Fragment}
@@ -233,7 +235,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                     enterTo="opacity-100"
                     leave="ease-in-out duration-300"
                     leaveFrom="opacity-100"
-                    leaveTo="opacity-0">
+                    leaveTo="opacity-0"
+                  >
                     <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
                       <button type="button" className="-m-2.5 p-2.5" onClick={() => setSidebarOpen(false)}>
                         <span className="sr-only">Close sidebar</span>
@@ -261,7 +264,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                                         ? "bg-gray-800 text-white"
                                         : "text-gray-400 hover:text-white hover:bg-gray-800",
                                       "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all",
-                                    )}>
+                                    )}
+                                  >
                                     <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                                     {item.name}
                                   </Link>
@@ -281,7 +285,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                                       ? "bg-gray-800/50 text-white"
                                       : "text-gray-400 hover:text-white hover:bg-gray-800",
                                     "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all",
-                                  )}>
+                                  )}
+                                >
                                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
                                     {course.initial}
                                   </span>
@@ -322,7 +327,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                                 ? "bg-gray-800 text-white"
                                 : "text-gray-400 hover:text-white hover:bg-gray-800",
                               "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all",
-                            )}>
+                            )}
+                          >
                             <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                             {item.name}
                           </Link>
@@ -342,7 +348,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                               ? "bg-gray-800/50 text-white"
                               : "text-gray-400 hover:text-white hover:bg-gray-800",
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all",
-                          )}>
+                          )}
+                        >
                           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
                             {course.initial}
                           </span>

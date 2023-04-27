@@ -35,7 +35,7 @@ export const handler: NextApiHandler = async (req, res) => {
 
   upload(inputPath, body.inputFile);
   upload(outputPath, body.outputFile);
-  console.log(body.courseID)
+  console.log(body.courseID);
   const { data: assignment, error } = await supabaseAdmin
     .from("assignment")
     .insert({

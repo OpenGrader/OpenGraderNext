@@ -46,7 +46,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ users, value, onChange, lab
               enterTo="opacity-100 scale-100"
               leave="transition ease-in duration-100"
               leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95">
+              leaveTo="opacity-0 scale-95"
+            >
               <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-950 py-1 text-base shadow-lg ring-1 ring-white ring-opacity-5 focus:outline-none sm:text-sm">
                 {users.map((user) => (
                   <Listbox.Option
@@ -57,7 +58,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ users, value, onChange, lab
                         "relative cursor-default select-none py-2 pl-3 pr-9",
                       )
                     }
-                    value={user}>
+                    value={user}
+                  >
                     {({ selected, active }) => (
                       <>
                         <div className="flex">
@@ -74,7 +76,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ users, value, onChange, lab
                             className={classNames(
                               active ? "text-gray-950" : "text-cyan-600",
                               "absolute inset-y-0 right-0 flex items-center pr-4",
-                            )}>
+                            )}
+                          >
                             <HiCheck className="h-5 w-5" aria-hidden="true" />
                           </span>
                         ) : null}

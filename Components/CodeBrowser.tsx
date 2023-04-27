@@ -13,33 +13,33 @@ interface CodeBrowserProps {
 const CodeBrowser: React.FC<CodeBrowserProps> = ({ language, code, onCommentSubmit }) => {
   const lines = code.split("\n");
   const [selectedLine, setSelectedLine] = React.useState<number | null>(null);
-  const [comments, setComments] = React.useState<{[key: number]: string}>({});
+  const [comments, setComments] = React.useState<{ [key: number]: string }>({});
 
   const handleLineClick = (lineNumber: number) => {
     setSelectedLine(lineNumber);
   };
 
-  const handleCommentSubmit = (event: React.FormEvent<HTMLFormElement>, lineContent:string, lineNumber: number) => {
+  const handleCommentSubmit = (event: React.FormEvent<HTMLFormElement>, lineContent: string, lineNumber: number) => {
     event.preventDefault();
     const submissionNanoID = "ZmXBpMYoWYTkYrzLC15Ac"; //hardcoded for now, don't know how to request this given the way our current backend is set up.
-    
+
     const formData = new FormData(event.currentTarget);
     const commentText = formData.get("comment") as string;
-    setComments({...comments, [lineNumber]: commentText});
+    setComments({ ...comments, [lineNumber]: commentText });
     onCommentSubmit(submissionNanoID, lineNumber, lineContent, commentText);
   };
   return (
-  <div className="py-5">
-    <table>
-      <tbody>
-        {lines.map((line, index) => (
-          <tr 
-          key={index}
-          className={selectedLine === index + 1 ? "selected" : ""}
-          onClick={() => handleLineClick(index + 1)}
-          >
-            <td className="select-none text-[#aaa] font-mono">{index + 1}</td>
-            <td className="line-content">
+    <div className="py-5">
+      <table>
+        <tbody>
+          {lines.map((line, index) => (
+            <tr
+              key={index}
+              className={selectedLine === index + 1 ? "selected" : ""}
+              onClick={() => handleLineClick(index + 1)}
+            >
+              <td className="select-none text-[#aaa] font-mono">{index + 1}</td>
+              <td className="line-content">
                 <pre
                   className="line-code"
                   dangerouslySetInnerHTML={{
@@ -48,19 +48,20 @@ const CodeBrowser: React.FC<CodeBrowserProps> = ({ language, code, onCommentSubm
                 />
                 {selectedLine === index + 1 && (
                   <div className={`comment-box ${selectedLine === index ? "open" : ""}`}>
-                    <form onSubmit={(event) =>handleCommentSubmit(event, line, index + 1)} autoComplete="off">
-                      <textarea name="comment" placeholder="Add a comment" autoComplete="off"/>
-                      <Button type="submit" size="md" className="whitespace-nowrap w-min ml-auto" >
+                    <form onSubmit={(event) => handleCommentSubmit(event, line, index + 1)} autoComplete="off">
+                      <textarea name="comment" placeholder="Add a comment" autoComplete="off" />
+                      <Button type="submit" size="md" className="whitespace-nowrap w-min ml-auto">
                         Submit
                       </Button>
                     </form>
                   </div>
                 )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>)
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 export default CodeBrowser;

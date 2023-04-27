@@ -9,7 +9,7 @@ import Button from "Components/Button";
 import { supabaseAdmin } from "util/supabaseClient";
 import CodeBrowser from "Components/CodeBrowser";
 import Comments from "Components/Comments";
-import {Comment} from 'Components/Comments';
+import { Comment } from "Components/Comments";
 import { useAppSelector } from "hooks";
 import { createClient } from "@supabase/supabase-js";
 
@@ -73,11 +73,11 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
       .eq("id", assignmentId)
       .order("created_at", { foreignTable: "submission", ascending: false })
       .single();
-      
-      const commentData = await supabase
-            .from("comments")
-            .select(
-              `
+
+    const commentData = await supabase
+      .from("comments")
+      .select(
+        `
               id,
               submission_nano_ID,
               line_number,
@@ -85,7 +85,9 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
               name,
               line_content,
               assignment_id
-              `).order("created_at", { ascending: false });
+              `,
+      )
+      .order("created_at", { ascending: false });
     return {
       props: {
         id: assignmentId,
@@ -110,17 +112,30 @@ const flagClass = (flag: string): BadgeVariant => {
   }
 };
 
-const SubmissionCard: React.FC<Submission & { file: string, serverComments: Comment[]}> = ({id, is_late, score, flags, student, file, serverComments}) => {
+const SubmissionCard: React.FC<Submission & { file: string; serverComments: Comment[] }> = ({
+  id,
+  is_late,
+  score,
+  flags,
+  student,
+  file,
+  serverComments,
+}) => {
   const [isSubmissionCardClicked, setIsSubmissionCardClicked] = useState(false);
   const [comments, setComments] = useState<Comment[]>(serverComments);
   const user = useAppSelector((store) => store.user);
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
   const supabase = createClient(supabaseUrl, supabaseKey);
   const handleSubmissionCardClick = () => {
     setIsSubmissionCardClicked((prevState) => !prevState);
   };
-  const handleCommentSubmit = async (submissionNanoID: string, lineNumber: number, lineContent: string, commentText: string) => {
+  const handleCommentSubmit = async (
+    submissionNanoID: string,
+    lineNumber: number,
+    lineContent: string,
+    commentText: string,
+  ) => {
     //create new comment object
     const newComment = {
       line_number: lineNumber,
@@ -128,21 +143,18 @@ const SubmissionCard: React.FC<Submission & { file: string, serverComments: Comm
       name: user.name,
       line_content: lineContent,
       assignment_id: id,
-    }
-    
+    };
+
     //insert new comment into supabase and error check
-    const { data, error } = await supabase
-      .from("comments")
-      .insert(newComment)
-      .select()
+    const { data, error } = await supabase.from("comments").insert(newComment).select();
     if (error) {
       console.log("error: ", error);
     }
 
     //update comments state
     setComments([...comments, newComment]);
-  }
-  
+  };
+
   let studentDesc: string;
   if (student.given_name || student.family_name) {
     studentDesc = `${student.given_name} ${student.family_name}`;
@@ -170,7 +182,11 @@ const SubmissionCard: React.FC<Submission & { file: string, serverComments: Comm
             </div>
           </div>
         </div>
-        <div>{isSubmissionCardClicked && <CodeBrowser language="python" code={file} onCommentSubmit={handleCommentSubmit}/>}</div>
+        <div>
+          {isSubmissionCardClicked && (
+            <CodeBrowser language="python" code={file} onCommentSubmit={handleCommentSubmit} />
+          )}
+        </div>
         <div>{isSubmissionCardClicked && <Comments assignment_id={id} comments={comments}></Comments>}</div>
       </div>
     </div>
@@ -207,23 +223,23 @@ const AssignmentView: NextPage<AssignmentProps> = ({ assignment, file, courseId,
           <h2 className="font-semibold text-2xl text-gray-50">Submissions</h2>
         </div>
         {assignment.submission.map((submission) => {
-              if (typeof submission.student === "number") {
-                return null;
-              }
-              return (
-                submission.student && (
-                  <SubmissionCard
-                    id={submission.id.toString()}
-                    is_late={submission.is_late}
-                    score={submission.score}
-                    flags={submission.flags}
-                    student={submission.student}
-                    file={file}
-                    serverComments={serverComments}
-                  />
-                )
-              );
-            })}
+          if (typeof submission.student === "number") {
+            return null;
+          }
+          return (
+            submission.student && (
+              <SubmissionCard
+                id={submission.id.toString()}
+                is_late={submission.is_late}
+                score={submission.score}
+                flags={submission.flags}
+                student={submission.student}
+                file={file}
+                serverComments={serverComments}
+              />
+            )
+          );
+        })}
         {assignment.submission.length === 0 && <em className="text-gray-300">No submissions yet.</em>}
       </div>
     </div>
