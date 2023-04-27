@@ -28,6 +28,7 @@ interface AssignmentProps {
   courseId: number;
   assignment: AssignmentT;
   file: string;
+  serverComments: Comment[];
 }
 
 export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
