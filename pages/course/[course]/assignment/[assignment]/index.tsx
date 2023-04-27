@@ -11,6 +11,7 @@ import CodeBrowser from "Components/CodeBrowser";
 import Comments from "Components/Comments";
 import {Comment} from 'Components/Comments';
 import { useAppSelector } from "hooks";
+import { createClient } from "@supabase/supabase-js";
 
 type Submission = {
   id: string;
@@ -72,7 +73,7 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
       .eq("id", assignmentId)
       .order("created_at", { foreignTable: "submission", ascending: false })
       .single();
-
+      
       const commentData = await supabase
             .from("comments")
             .select(
@@ -108,22 +109,39 @@ const flagClass = (flag: string): BadgeVariant => {
   }
 };
 
-const SubmissionCard: React.FC<Submission & { file: string}> = ({id, is_late, score, flags, student, file}) => {
+const SubmissionCard: React.FC<Submission & { file: string, serverComments: Comment[]}> = ({id, is_late, score, flags, student, file, serverComments}) => {
   const [isSubmissionCardClicked, setIsSubmissionCardClicked] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const user = useAppSelector((store) => store.user)
+  const [comments, setComments] = useState<Comment[]>(serverComments);
+  const user = useAppSelector((store) => store.user);
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
+  const supabase = createClient(supabaseUrl, supabaseKey);
   const handleSubmissionCardClick = () => {
     setIsSubmissionCardClicked((prevState) => !prevState);
   };
-  const handleCommentSubmit = (lineNumber: number, lineContent: string, text: string) => {
+  const handleCommentSubmit = async (submissionNanoID: string, lineNumber: number, lineContent: string, commentText: string) => {
+    //create new comment object
     const newComment = {
-      lineNumber: lineNumber,
-      lineContent: lineContent,
-      text: text,
-      author: user.name,
+      submission_nano_ID: submissionNanoID,
+      line_number: lineNumber,
+      comment_text: commentText,
+      name: user.name,
+      line_content: lineContent,
     }
-    setComments([...comments, newComment])
+    
+    //insert new comment into supabase and error check
+    const { data, error } = await supabase
+      .from("comments")
+      .insert(newComment)
+      .select()
+    if (error) {
+      console.log("error: ", error);
+    }
+
+    //update comments state
+    setComments([...comments, newComment]);
   }
+  
   let studentDesc: string;
   if (student.given_name || student.family_name) {
     studentDesc = `${student.given_name} ${student.family_name}`;
@@ -158,7 +176,7 @@ const SubmissionCard: React.FC<Submission & { file: string}> = ({id, is_late, sc
   );
 };
 
-const AssignmentView: NextPage<AssignmentProps> = ({ assignment, file, courseId }) => {
+const AssignmentView: NextPage<AssignmentProps> = ({ assignment, file, courseId, serverComments }) => {
   return (
     <div className="flex flex-wrap">
       <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 w-full">
@@ -200,6 +218,7 @@ const AssignmentView: NextPage<AssignmentProps> = ({ assignment, file, courseId 
                     flags={submission.flags}
                     student={submission.student}
                     file={file}
+                    serverComments={serverComments}
                   />
                 )
               );
