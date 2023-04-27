@@ -73,12 +73,24 @@ export const getServerSideProps = (ctx: GetServerSidePropsContext) =>
       .order("created_at", { foreignTable: "submission", ascending: false })
       .single();
 
+      const commentData = await supabase
+            .from("comments")
+            .select(
+              `
+              id,
+              submission_nano_ID,
+              line_number,
+              comment_text,
+              name,
+              line_content
+              `).order("created_at", { ascending: false });
     return {
       props: {
         id: assignmentId,
         courseId,
         assignment: assignmentData.data,
         file: code,
+        serverComments: commentData.data,
       },
     };
   });
