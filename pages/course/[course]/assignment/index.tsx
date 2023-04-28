@@ -160,9 +160,14 @@ const Assignments: NextPage<AssignmentListProps> = ({ assignments, course, secti
         <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
           <h1 className="text-3xl font-bold">Assignments - {courseName}</h1>
           {isInstructor && (
-            <Button href={`/course/${course.id}/assignment/new`}>
-              <HiPlus /> New assignment
-            </Button>
+            <div className="flex flex-wrap gap-4">
+              <Button variant="secondary" href={`/course/${course.id}/edit`}>
+                Edit course
+              </Button>
+              <Button href={`/course/${course.id}/assignment/new`}>
+                <HiPlus /> New assignment
+              </Button>
+            </div>
           )}
         </div>
         <div className="grid xl:grid-cols-2 gap-6">
