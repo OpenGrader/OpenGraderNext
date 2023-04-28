@@ -142,9 +142,6 @@ const AssignmentBlock: React.FC<{
 
             {isInstructor && (
               <>
-                <PanelLink title="Edit" position="other" href={`${router.asPath}/${id}/edit`}>
-                  <HiPencil />
-                </PanelLink>
                 <PanelLink title="Delete" position="last" href="#" onClick={() => deleteAssignment(assignment)}>
                   <HiX className="text-red-500" />
                 </PanelLink>
