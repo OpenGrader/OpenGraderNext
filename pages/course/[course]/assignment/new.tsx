@@ -200,7 +200,8 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
                 onChange={(e) => setLang(e.target.value)}
                 id="language"
                 name="language"
-                className="block w-full rounded-md bg-gray-950 border-gray-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                className="block w-full rounded-md bg-gray-950 border-gray-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              >
                 <option>C/C++</option>
                 <option>Python</option>
                 <option>JavaScript</option>
@@ -216,7 +217,8 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
                 onClick={() => {
                   fileDispatch({ type: "decrement" });
                   if (count >= fileState.fileStore.length - 2) setCount("decrement");
-                }}>
+                }}
+              >
                 <HiOutlineMinus />
                 <p className="sr-only">{fileState.fileStore.length < 3 ? "Remove last test" : "No more tests"}</p>
               </button>
@@ -238,14 +240,16 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
             <h1 className="text-sm font-medium text-gray-300 pb-2">Input definition</h1>
             <label
               htmlFor="input-def"
-              className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-800/25 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-700/25 transition">
+              className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-800/25 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-700/25 transition"
+            >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg aria-hidden="true" fill="none" stroke="currentColor" className="w-12 h-12 mx-auto text-gray-600">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  ></path>
                 </svg>
                 {!fileState.fileStore[count] ? (
                   <>
@@ -274,14 +278,16 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
             <h1 className="text-sm font-medium text-gray-300 pb-2">Output definition</h1>
             <label
               htmlFor="output-def"
-              className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-800/25 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-700/25 transition">
+              className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-800/25 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-700/25 transition"
+            >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg aria-hidden="true" fill="none" stroke="currentColor" className="w-12 h-12 mx-auto text-gray-600">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  ></path>
                 </svg>
                 {!fileState.fileStore[count + 1] ? (
                   <>
@@ -311,7 +317,8 @@ const CreateAssignment: NextPage<CreateAssignmentProps> = ({ courseId }) => {
             type="submit"
             className="whitespace-nowrap w-min ml-auto mt-2"
             size="lg"
-            onClick={(e: MouseEvent<HTMLButtonElement>) => handleClick(e)}>
+            onClick={(e: MouseEvent<HTMLButtonElement>) => handleClick(e)}
+          >
             Create
           </Button>
         </form>

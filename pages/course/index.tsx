@@ -164,7 +164,8 @@ const SectionCard: React.FC<
             <PanelLink
               title="View"
               position={role === "INSTRUCTOR" ? "first" : "only"}
-              href={`${router.asPath}/${id}/assignment`}>
+              href={`${router.asPath}/${id}/assignment`}
+            >
               <HiEye />
             </PanelLink>
 

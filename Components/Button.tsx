@@ -92,7 +92,8 @@ const Button: React.FC<ButtonProps> = ({
           size === "md" && "text-sm py-1 px-3",
           size === "lg" && "text-base py-1.5 px-4 font-medium",
           className,
-        )}>
+        )}
+      >
         {arrow === "left" && arrowIcon}
         {children}
         {arrow === "right" && arrowIcon}

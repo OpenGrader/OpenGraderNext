@@ -29,7 +29,8 @@ const PanelLink: React.FC<PanelLinkProps> = ({ title, href, position, children, 
           roundingRules.get(position),
           // all should have right border except last and only items to prevent double border weight
           ["first", "other"].includes(position) && "border-r",
-        )}>
+        )}
+      >
         {children}
       </Component>
     </li>
