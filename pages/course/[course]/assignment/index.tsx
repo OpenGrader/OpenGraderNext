@@ -4,10 +4,12 @@ import { HiEye, HiPencil, HiPlus, HiPlusCircle, HiX } from "react-icons/hi";
 import { GetServerSidePropsContext, NextPage } from "next";
 import withProtected from "../../../../util/withProtected";
 import { getCurrentUser, queryParamToNumber } from "../../../../util/misc";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createBrowserSupabaseClient, createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/router";
 import Button from "Components/Button";
 import PanelLink from "Components/PanelLink";
+import { useState } from "react";
+import DeleteAssignmentModal from "Components/DeleteAssignmentMoment";
 //warning,all good, late, plagarism
 
 interface AssignmentListProps {
@@ -102,7 +104,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) =>
     };
   });
 
-const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean }> = ({ assignment, isInstructor }) => {
+const AssignmentBlock: React.FC<{
+  assignment: Assignment;
+  isInstructor: boolean;
+  deleteAssignment: (a: Assignment) => void;
+}> = ({ assignment, isInstructor, deleteAssignment }) => {
   const { title, submissionCount, warnings, id } = assignment;
   const router = useRouter();
 
@@ -136,10 +142,7 @@ const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean 
 
             {isInstructor && (
               <>
-                <PanelLink title="Edit" position="other" href={`${router.asPath}/${id}/edit`}>
-                  <HiPencil />
-                </PanelLink>
-                <PanelLink title="Delete" position="last" href={`${router.asPath}/${id}/delete`}>
+                <PanelLink title="Delete" position="last" href="#" onClick={() => deleteAssignment(assignment)}>
                   <HiX className="text-red-500" />
                 </PanelLink>
               </>
@@ -154,20 +157,58 @@ const AssignmentBlock: React.FC<{ assignment: Assignment; isInstructor: boolean 
 const Assignments: NextPage<AssignmentListProps> = ({ assignments, course, section, isInstructor }) => {
   const courseName = `${course.department} ${course.number}.${section.number}`;
 
+  const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment>();
+  const [deleteAssignmentModalOpen, setDeleteModalOpen] = useState(false);
+
+  const router = useRouter();
+
+  const deleteAssignment = async (id: number) => {
+    const supabase = createBrowserSupabaseClient();
+
+    await supabase
+      .from("assignment")
+      .delete()
+      .eq("id", id)
+      .then(() => {
+        router.replace(router.asPath);
+      });
+  };
+
   return (
     <div className="flex">
       <div className="text-gray-100 px-12 pt-6 flex flex-col gap-4 w-full">
         <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
           <h1 className="text-3xl font-bold">Assignments - {courseName}</h1>
           {isInstructor && (
-            <Button href={`/course/${course.id}/assignment/new`}>
-              <HiPlus /> New assignment
-            </Button>
+            <div className="flex flex-wrap gap-4">
+              <DeleteAssignmentModal
+                assignment={assignmentToDelete}
+                open={deleteAssignmentModalOpen}
+                setOpen={setDeleteModalOpen}
+                deleteAssignment={deleteAssignment}
+              />
+              <Button variant="secondary" href={`/course/${course.id}/edit`}>
+                Edit course
+              </Button>
+              <Button href={`/course/${course.id}/assignment/new`}>
+                <HiPlus /> New assignment
+              </Button>
+            </div>
           )}
         </div>
         <div className="grid xl:grid-cols-2 gap-6">
           {assignments.map((assignment, index) => {
-            return <AssignmentBlock assignment={assignment} isInstructor={isInstructor} key={index} />;
+            return (
+              <AssignmentBlock
+                assignment={assignment}
+                isInstructor={isInstructor}
+                key={index}
+                deleteAssignment={(a: Assignment) => {
+                  setAssignmentToDelete(a);
+                  setDeleteModalOpen(true);
+                }}
+              />
+            );
           })}
         </div>
       </div>
